@@ -1,0 +1,22 @@
+{
+    "menu": [
+        {
+            "url": "formulario",
+            "name": "Formulario",
+            "slug": "formulario",   
+            "icon": "feather icon-clipboard"
+        },
+        {
+            "url": "control",
+            "name": "Control",
+            "slug": "Control",   
+            "icon": "feather icon-user-check"
+        },
+        {
+            "url": "admin",
+            "name": "Admin",
+            "slug": "admin",
+            "icon": "feather icon-globe"
+        }
+    ]
+}
