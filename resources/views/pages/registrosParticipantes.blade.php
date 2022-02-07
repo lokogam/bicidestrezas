@@ -33,11 +33,24 @@
 
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label>Filtro colectivo</label>
+                                        <label>Filtro punto</label>
                                         <select class="select2 form-control" id="punto" onchange="tabla()">
                                             <option value=""></option>
                                             @foreach ($puntos as $punto)
-                                                <option value="{{ $punto->id }}">{{ $punto->nombre_punto }} 
+                                                <option value="{{ $punto->id }}">{{ $punto->nombre_punto }} - {{ $punto->ubicacion }} 
+                                                    </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Filtro colectivo</label>
+                                        <select class="select2 form-control" id="colectivo" onchange="tabla()">
+                                            <option value=""></option>
+                                            @foreach ($puntosFormacion as $punto)
+                                                <option value="{{ $punto->id }}">{{ $punto->colectivo }} - {{ $punto->ubicacion_espacio }} 
                                                     </option>
                                             @endforeach
                                         </select>
@@ -75,33 +88,36 @@
                                 </div>
                             </div>
 
-                        <div id="detalleModal" class="modal fade text-left" tabindex="-1" role="dialog" aria-labelledby="myModalLabel17"
-                            aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h4 class="modal-title" id="myModalLabel17">Detalles de la Acción</h4>
-                    
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <div class="modal-body" id="detalleBody">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
+
     </div>
+
+<div id="detalleModal" class="modal fade text-left" tabindex="-1" role="dialog" aria-labelledby="myModalLabel17"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel17">Detalles de Encuestados </h4>
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="detalleBody">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </section>
 
     <script>
         function tabla() {
             var punto = $("#punto").val();
+            var puntoFormacion = $("#colectivo").val();
             var fecha = $("#fecha_desde").val();
             var fecha_H = $("#fecha_hasta").val();
 
@@ -123,6 +139,7 @@
 
             var parametros = {
                 "puntoR": punto,
+                "puntoRF": puntoFormacion,
                 "fechaR": fecha,
                 "fechahR": fecha_H,
                 "filtro": 1
@@ -141,11 +158,13 @@
 
         function reiniciarFiltros() {
             var puntoR = $("#punto").val('');
+            var puntoRF = $("#colectivo").val('');
             var fechaR = $("#fecha_desde").val('');
             var fechahR = $("#fecha_hasta").val('');
 
             var parametros = {
                 "puntoR": '',
+                "puntoRF": '',
                 "fechaR": '',
                 "filtro": 1
             };
@@ -168,9 +187,25 @@
             var fecha = $("#fecha_desde").val();
             var fecha_hasta = $("#fecha_hasta").val();
 
-            var dir = "exportaeExcelParticipantes?punto=" + punto  + "&fecha=" + fecha + "&fecha_hasta=" + fecha_hasta;
+            var dir = "exportarexcelparticipantes?punto=" + punto  + "&fecha=" + fecha + "&fecha_hasta=" + fecha_hasta;
 
             window.open(dir);
+        }
+
+        function showModal(id) {
+            var parametros = {
+                "id": id
+            };
+
+            $.ajax({
+                data: parametros,
+                url: "{{ route('detalleparticipante') }}",
+                type: 'get',
+
+                success: function(response) {
+                    $("#detalleBody").html(response);
+                }
+            });
         }
     </script>
 

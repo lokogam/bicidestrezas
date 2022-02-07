@@ -92,12 +92,14 @@ Route::middleware(['auth'])->group(function () {
 		Route::get('/detalleaccion', 'AdminController@detalleAccion')->name('detalleaccion');
 		
 		Route::get('/detalleformacion', 'AdminController@detalleFormacion')->name('detalleformacion');
+
+		Route::get('/detalleparticipantes', 'AdminController@detalleParticipante')->name('detalleparticipante');
 		
 		Route::get('/descargarimagen', 'AdminController@descargarImagen')->name('descargarimagen');
 		
 		Route::get('/exportarexcelacciones', 'AdminController@exportarExcelAcciones');
 
-		Route::get('/exportarexcelformacion', 'AdminController@exportarExcelFormacion');
+		Route::get('/exportarexcelparticipantes', 'AdminController@exportarExcelParticipantes');
 
 		Route::get('/pdfaceptacion', 'AdminController@pdfAceptacion');
 

@@ -1,9 +1,10 @@
-<h4>Número de registros: {{-- {{ count($conteoR) }} --}}</h4>
+<h4>Número de registros: {{ count($conteoR) }}</h4>
 
 <table class="table">
     <thead>
         <tr>
             <th>Detalle</th>
+            <th>Punto</th>
             <th>Colectivo</th>
             <th>Nombre</th>
             <th>Documento</th>
@@ -18,18 +19,28 @@
         <tr>
             <td>
                 <button type="button" id="mostrarDetalleModal" onclick="showModal({{ $registro->id }})"
-                class="btn btn-default show" data-toggle="modal" data-target="#detalleModal">
-                <i class="feather icon-eye">{{ $registro->id }}</i>
+                    class="btn btn-default show" data-toggle="modal" data-target="#detalleModal">
+                    <i class="feather icon-eye">{{ $registro->id }}</i>
                 </button>
             </td>
             
-            <td>{{ $registro->nombre_punto }} <br> {{ $registro->colectivo }} - {{ $registro->ubicacion }}</td>
+            <td>{{ $registro->nombre_punto }} <br> {{ $registro->ubicacion }}</td>
+            <td>{{ $registro->colectivo }} <br> {{ $registro->ubicacion_espacio }}</td>
             <td>{{ $registro->nombre }}</td>
             <td>{{ $registro->numero_documento }}</td>
             <td>{{ $registro->correo }}</td>
             <td>{{ $registro->numero_celular }}</td>
             
-            <th>{{ $registro->nivel }}</th>
+            <th>
+                1
+                <input type="radio"  {{ $registro->calificacion_post_1 != '' ? 'checked' : 'disabled' }}>
+                2
+                <input type="radio"  {{ $registro->calificacion_post_2 != '' ? 'checked' : 'disabled' }}>
+                3
+                <input type="radio"  {{ $registro->calificacion_post_3 != '' ? 'checked' : 'disabled' }}>
+                4
+                <input type="radio"  {{ $registro->calificacion_post_4 != '' ? 'checked' : 'disabled' }}>
+            </th>
         </tr>
             
         @endforeach
@@ -38,6 +49,7 @@
     <tfoot>
         <tr>
             <th>Detalle</th>
+            <th>Punto</th>
             <th>Colectivo</th>
             <th>Nombre</th>
             <th>Documento</th>
@@ -49,6 +61,6 @@
 </table>
 
 <div class="pagination">
-    {{ $registros->appends(['puntoR' => Request::input('puntoR'), 'fechaR' => Request::input('fechaR'), 'fechahR' =>
+    {{ $registros->appends([ 'puntoR' => Request::input('puntoR'), 'puntoRF' => Request::input('puntoRF'), 'fechaR' => Request::input('fechaR'), 'fechahR' =>
     Request::input('fechahR')])->links() }}
 </div>

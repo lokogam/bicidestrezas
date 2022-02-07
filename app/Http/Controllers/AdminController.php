@@ -271,140 +271,6 @@ class AdminController extends Controller
             ->with('conteoR', $conteoR);
     }
 
-//formacion_encuestados
-    public function verRegistrosParticipantes(Request $request){
-        
-        $puntoR   = $request->input('puntoR');
-        $fechaR   = $request->input('fechaR');
-        $fechahR  = $request->input('fechahR');
-
-        if (isset($puntoR) && !empty($puntoR)) {
-            $campopR = 'formacion_puntos.id';
-            $varpR = '=';
-            $signopR = '' . $puntoR . '';
-        } else {
-            $campopR = 'formacion_encuestados.id';
-            $varpR = '!=';
-            $signopR = '-3';
-        }
-
-        if (isset($fechaR) && !empty($fechaR) && isset($fechahR) && !empty($fechahR)) {
-            $fecha = strtotime($fechahR);
-            $fecha = date('Y-m-d', $fecha);
-
-            $campofR = 'formacion_niveles.fecha';
-            $signo1fR = '' . $fechaR . '';
-            $signo2fR = '' . $fecha . '';
-        } else {
-            $fecha = strtotime('+1 day', strtotime(date('Y-m-d')));
-            $fecha = date('Y-m-d', $fecha);
-
-            $campofR = 'formacion_niveles.fecha';
-            $signo1fR = '1900-12-04';
-            $signo2fR = $fecha;
-        }
-
-        $registros = DB::table('formacion_encuestados')
-        ->join('formacion_puntos', 'formacion_encuestados.formacion_puntos_id','formacion_puntos.id')
-        ->join('puntos','formacion_puntos.puntos_id', 'puntos.id')
-        ->join('users','formacion_puntos.users_id', 'users.id')
-        ->join('formacion_niveles','formacion_niveles.formacion_puntos_id', '=', 'formacion_encuestados.formacion_puntos_id')
-        ->leftJoin('formacion_respuestas_1', 'formacion_respuestas_1.formacion_encuestados_id', '=', 'formacion_encuestados.id')
-        ->leftJoin('formacion_respuestas_2', 'formacion_respuestas_2.formacion_encuestados_id', '=', 'formacion_encuestados.id')
-        ->leftJoin('formacion_respuestas_3', 'formacion_respuestas_3.formacion_encuestados_id', '=', 'formacion_encuestados.id')
-        ->leftJoin('formacion_respuestas_4', 'formacion_respuestas_4.formacion_encuestados_id', '=', 'formacion_encuestados.id')
-        ->leftJoin('formacion_cartografia_3', 'formacion_cartografia_3.formacion_encuestados_id', '=', 'formacion_encuestados.id')
-        ->where($campopR, $varpR, $signopR)
-        ->whereBetween($campofR, array($signo1fR, $signo2fR))
-        ->select(
-            "formacion_encuestados.*",
-            "users.name",
-            "users.documento",
-            "puntos.ciudad",
-            "puntos.nombre_punto",
-            "formacion_puntos.colectivo",
-            "formacion_puntos.ubicacion",
-            "formacion_niveles.nivel",
-            "formacion_niveles.fecha",
-            "formacion_niveles.hora",
-            "formacion_niveles.estado",
-            "formacion_respuestas_1.*",
-            "formacion_respuestas_2.*",
-            "formacion_respuestas_3.*",
-            "formacion_respuestas_4.*",
-            "formacion_cartografia_3.*",
-        )
-        ->orderBy("formacion_encuestados.id", "DESC")
-        ->distinct("formacion_encuestados.id")
-            ->paginate(2);
-
-
-            $conteoR = DB::table('formacion_encuestados')
-            ->join('formacion_puntos', 'formacion_encuestados.formacion_puntos_id','formacion_puntos.id')
-            ->join('puntos','formacion_puntos.puntos_id', 'puntos.id')
-            ->join('users','formacion_puntos.users_id', 'users.id')
-            ->join('formacion_niveles','formacion_niveles.formacion_puntos_id', '=', 'formacion_encuestados.formacion_puntos_id')
-            ->leftJoin('formacion_respuestas_1', 'formacion_respuestas_1.formacion_encuestados_id', '=', 'formacion_encuestados.id')
-            ->leftJoin('formacion_respuestas_2', 'formacion_respuestas_2.formacion_encuestados_id', '=', 'formacion_encuestados.id')
-            ->leftJoin('formacion_respuestas_3', 'formacion_respuestas_3.formacion_encuestados_id', '=', 'formacion_encuestados.id')
-            ->leftJoin('formacion_respuestas_4', 'formacion_respuestas_4.formacion_encuestados_id', '=', 'formacion_encuestados.id')
-            ->leftJoin('formacion_cartografia_3', 'formacion_cartografia_3.formacion_encuestados_id', '=', 'formacion_encuestados.id')
-            ->where($campopR, $varpR, $signopR)
-            ->whereBetween($campofR, array($signo1fR, $signo2fR))
-            ->select(
-                "formacion_encuestados.*",
-                "users.name",
-                "users.documento",
-                "puntos.nombre_punto",
-                "formacion_puntos.colectivo",
-                "formacion_puntos.ubicacion",
-                "formacion_niveles.nivel",
-                "formacion_niveles.fecha",
-                "formacion_niveles.hora",
-                "formacion_niveles.estado",
-                "formacion_respuestas_1.*",
-                "formacion_respuestas_2.*",
-                "formacion_respuestas_3.*",
-                "formacion_respuestas_4.*",
-                "formacion_cartografia_3.*",
-            )
-            ->orderBy("formacion_encuestados.id", "DESC")
-            ->distinct("formacion_encuestados.id")
-            ->get();
-
-            $puntos = DB::table('puntos')
-            ->select('puntos.*')
-            ->get();
-
-        // $puntos = DB::table('formacion_puntos')
-        //     ->join('puntos','puntos.id', '=', 'formacion_puntos.puntos_id')
-        //     ->join('users','formacion_puntos.users_id', '=', 'users.id')
-        //     ->select(
-        //         "formacion_puntos.id",
-        //         "formacion_puntos.colectivo",
-        //         "formacion_puntos.ubicacion",
-        //         "users.name",
-        //         "puntos.nombre_punto",
-        //         "puntos.ciudad",
-        //     )
-        //     ->get();
-
-        if ($request->input('filtro') && $request->input('filtro') == 1) {
-                return View::make('pages.tabla_registros_participantes')
-                    ->with('registros', $registros)
-                    ->with('puntos', $puntos)
-                    ->with('conteoR', $conteoR);
-            }
-
-        return View::make('pages.registrosparticipantes')
-                        ->with('registros', $registros)
-                        ->with('conteoR', $conteoR)
-                        ->with('puntos', $puntos);
-
-        // return response()->json( $registros);
-
-    }
-
 
     public function detalleAccion(Request $request)
     {
@@ -646,8 +512,225 @@ class AdminController extends Controller
     }
 
 
+    //formacion_encuestados
+    public function verRegistrosParticipantes(Request $request){
+        
+        $puntoR   = $request->input('puntoR');
+        $puntoRF   = $request->input('puntoRF');
+        $fechaR   = $request->input('fechaR');
+        $fechahR  = $request->input('fechahR');
+        $nivelF  = $request->input('nivelF');
 
-    public function exportaeExcelParticipantes(Request $request){
+        if (isset($nivelF) && !empty($nivelF)) {
+            $campopN = 'formacion_puntos.puntos_id';
+            $varpN = '=';
+            $signopN = '' . $nivelF . '';
+        } else {
+            $campopN = 'formacion_puntos.id';
+            $varpN = '!=';
+            $signopN = '-3';
+        }
+
+        if (isset($puntoR) && !empty($puntoR)) {
+            $campopR = 'formacion_puntos.puntos_id';
+            $varpR = '=';
+            $signopR = '' . $puntoR . '';
+        } else {
+            $campopR = 'formacion_puntos.id';
+            $varpR = '!=';
+            $signopR = '-3';
+        }
+        
+        if (isset($puntoRF) && !empty($puntoRF)) {
+            $campopRc = 'formacion_encuestados.formacion_puntos_id';
+            $varpRc = '=';
+            $signopRc = '' . $puntoRF . '';
+        } else {
+            $campopRc = 'formacion_encuestados.id';
+            $varpRc = '!=';
+            $signopRc = '-3';
+        }
+        
+        if (isset($fechaR) && !empty($fechaR) && isset($fechahR) && !empty($fechahR)) {
+            $fecha = strtotime($fechahR);
+            $fecha = date('Y-m-d', $fecha);
+
+            $campofR = 'formacion_niveles.fecha';
+            $signo1fR = '' . $fechaR . '';
+            $signo2fR = '' . $fecha . '';
+        } else {
+            $fecha = strtotime('+1 day', strtotime(date('Y-m-d')));
+            $fecha = date('Y-m-d', $fecha);
+
+            $campofR = 'formacion_niveles.fecha';
+            $signo1fR = '1900-12-04';
+            $signo2fR = $fecha;
+        }
+
+        $registros = DB::table('formacion_encuestados')
+        ->join('formacion_puntos', 'formacion_encuestados.formacion_puntos_id','formacion_puntos.id')
+        ->join('puntos','formacion_puntos.puntos_id', 'puntos.id')
+        ->join('users','formacion_puntos.users_id', 'users.id')
+        ->join('formacion_niveles','formacion_niveles.formacion_puntos_id', '=', 'formacion_encuestados.formacion_puntos_id')
+        ->leftJoin('formacion_respuestas_1', 'formacion_respuestas_1.formacion_encuestados_id', '=', 'formacion_encuestados.id')
+        ->leftJoin('formacion_respuestas_2', 'formacion_respuestas_2.formacion_encuestados_id', '=', 'formacion_encuestados.id')
+        ->leftJoin('formacion_respuestas_3', 'formacion_respuestas_3.formacion_encuestados_id', '=', 'formacion_encuestados.id')
+        ->leftJoin('formacion_respuestas_4', 'formacion_respuestas_4.formacion_encuestados_id', '=', 'formacion_encuestados.id')
+        ->leftJoin('formacion_cartografia_3', 'formacion_cartografia_3.formacion_encuestados_id', '=', 'formacion_encuestados.id')
+        ->where($campopR, $varpR, $signopR)
+        ->where($campopN, $varpN, $signopN)
+        ->where($campopRc, $varpRc, $signopRc)
+        ->whereBetween($campofR, array($signo1fR, $signo2fR))
+        ->select(
+            "formacion_encuestados.id",
+            "formacion_encuestados.nombre",
+            "formacion_encuestados.numero_documento",
+            "formacion_encuestados.correo",
+            "formacion_encuestados.numero_celular",
+            "users.name",
+            "users.documento",
+            "puntos.ciudad",
+            "puntos.nombre_punto",
+            "puntos.ubicacion",
+            "formacion_puntos.colectivo",
+            "formacion_puntos.ubicacion_espacio",
+            "formacion_niveles.nivel",
+            // "formacion_niveles.fecha",
+            // "formacion_niveles.hora",
+            "formacion_niveles.estado",
+            "formacion_respuestas_1.calificacion_post_1",
+            "formacion_respuestas_2.calificacion_post_2",
+            "formacion_respuestas_3.calificacion_post_3",
+            "formacion_respuestas_4.calificacion_post_4",
+            // "formacion_cartografia_3.*",
+        )
+        ->orderBy("formacion_encuestados.id", "DESC")
+        ->distinct("formacion_encuestados.id")
+            ->paginate(50);
+
+
+            $conteoR = DB::table('formacion_encuestados')
+            ->join('formacion_puntos', 'formacion_encuestados.formacion_puntos_id','formacion_puntos.id')
+            ->join('puntos','formacion_puntos.puntos_id', 'puntos.id')
+            ->join('users','formacion_puntos.users_id', 'users.id')
+            ->join('formacion_niveles','formacion_niveles.formacion_puntos_id', '=', 'formacion_encuestados.formacion_puntos_id')
+            ->leftJoin('formacion_respuestas_1', 'formacion_respuestas_1.formacion_encuestados_id', '=', 'formacion_encuestados.id')
+            ->leftJoin('formacion_respuestas_2', 'formacion_respuestas_2.formacion_encuestados_id', '=', 'formacion_encuestados.id')
+            ->leftJoin('formacion_respuestas_3', 'formacion_respuestas_3.formacion_encuestados_id', '=', 'formacion_encuestados.id')
+            ->leftJoin('formacion_respuestas_4', 'formacion_respuestas_4.formacion_encuestados_id', '=', 'formacion_encuestados.id')
+            ->leftJoin('formacion_cartografia_3', 'formacion_cartografia_3.formacion_encuestados_id', '=', 'formacion_encuestados.id')
+            ->where($campopR, $varpR, $signopR)
+            ->where($campopN, $varpN, $signopN)
+            ->where($campopRc, $varpRc, $signopRc)
+            ->whereBetween($campofR, array($signo1fR, $signo2fR))
+            ->select(
+                "formacion_encuestados.id",
+                "formacion_encuestados.nombre",
+                "formacion_encuestados.numero_documento",
+                "formacion_encuestados.correo",
+                "formacion_encuestados.numero_celular",
+                "users.name",
+                "users.documento",
+                "puntos.nombre_punto",
+                "puntos.ubicacion",
+                "formacion_puntos.colectivo",
+                "formacion_puntos.ubicacion_espacio",
+                "formacion_niveles.nivel",
+                // "formacion_niveles.fecha",
+                // "formacion_niveles.hora",
+                "formacion_niveles.estado",
+                "formacion_respuestas_1.calificacion_post_1",
+                "formacion_respuestas_2.calificacion_post_2",
+                "formacion_respuestas_3.calificacion_post_3",
+                "formacion_respuestas_4.calificacion_post_4",
+                // "formacion_cartografia_3.*",
+            )
+            ->orderBy("formacion_encuestados.id", "DESC")
+            ->distinct("formacion_encuestados.id")
+            ->get();
+
+            
+
+        $puntosFormacion = DB::table('formacion_puntos')
+            ->select("formacion_puntos.*")
+            ->get();
+        
+        $puntos = DB::table('puntos')
+            ->select('puntos.*')
+            ->get();
+        
+        $niveles = DB::table('puntos')
+            ->select('puntos.*')
+            ->get();
+
+        if ($request->input('filtro') && $request->input('filtro') == 1) {
+                return View::make('pages.tabla_registros_participantes')
+                    ->with('registros', $registros)
+                    ->with('puntos', $puntos)
+                    ->with('conteoR', $conteoR)
+                    ->with('puntosFormacion', $puntosFormacion)
+                    ;
+            }
+
+        return View::make('pages.registrosparticipantes')
+                        ->with('registros', $registros)
+                        ->with('conteoR', $conteoR)
+                        ->with('puntos', $puntos)
+                        ->with('puntosFormacion', $puntosFormacion)
+                        ;
+
+        // return response()->json( $registros);
+
+    }
+
+    public function detalleParticipante(Request $request)
+    {
+        $registro = DB::table('formacion_encuestados')
+        ->join('formacion_puntos', 'formacion_encuestados.formacion_puntos_id','formacion_puntos.id')
+        ->join('puntos','formacion_puntos.puntos_id', 'puntos.id')
+        ->join('users','formacion_puntos.users_id', 'users.id')
+        ->join('formacion_niveles','formacion_niveles.formacion_puntos_id', '=', 'formacion_encuestados.formacion_puntos_id')
+        ->leftJoin('formacion_respuestas_1', 'formacion_respuestas_1.formacion_encuestados_id', '=', 'formacion_encuestados.id')
+        ->leftJoin('formacion_respuestas_2', 'formacion_respuestas_2.formacion_encuestados_id', '=', 'formacion_encuestados.id')
+        ->leftJoin('formacion_respuestas_3', 'formacion_respuestas_3.formacion_encuestados_id', '=', 'formacion_encuestados.id')
+        ->leftJoin('formacion_respuestas_4', 'formacion_respuestas_4.formacion_encuestados_id', '=', 'formacion_encuestados.id')
+        ->leftJoin('formacion_cartografia_3', 'formacion_cartografia_3.formacion_encuestados_id', '=', 'formacion_encuestados.id')
+        ->select(
+            "formacion_encuestados.firma",
+            "formacion_encuestados.numero_documento",
+            "formacion_encuestados.nombre",
+            "formacion_encuestados.numero_celular",
+            "formacion_encuestados.correo",
+            "formacion_encuestados.edad",
+            "formacion_encuestados.sexo",
+            "formacion_encuestados.nivel_escolaridad",
+            "formacion_encuestados.poblacion_vulnerable",
+            "users.name",
+            "users.documento",
+            "puntos.ciudad",
+            "puntos.nombre_punto",
+            "formacion_puntos.colectivo",
+            "formacion_puntos.ubicacion_espacio",
+            "formacion_niveles.nivel",
+            "formacion_niveles.fecha",
+            "formacion_niveles.hora",
+            "formacion_niveles.estado",
+            "formacion_respuestas_1.*",
+            "formacion_respuestas_2.*",
+            "formacion_respuestas_3.*",
+            "formacion_respuestas_4.*",
+            "formacion_cartografia_3.*",
+        )
+        
+        ->where('formacion_encuestados.id', $request->input('id'))
+            ->get();
+
+        return view('pages/detalleParticipante', ['registro' => $registro]);
+        // return response()->json( $registro);
+
+    }
+
+    public function exportarExcelParticipantes(Request $request){
         $puntoR   = $request->input('puntoR');
         $fechaR   = $request->input('fechaR');
         $fechahR  = $request->input('fechahR');
@@ -679,28 +762,46 @@ class AdminController extends Controller
         }
 
         $registros = DB::table('formacion_encuestados')
-            ->join('formacion_puntos','formacion_puntos.id', '=', 'formacion_encuestados.formacion_puntos_id')
-            ->join('formacion_niveles','formacion_niveles.formacion_puntos_id', '=', 'formacion_encuestados.formacion_puntos_id')
+        ->join('formacion_puntos', 'formacion_encuestados.formacion_puntos_id','formacion_puntos.id')
+        ->join('puntos','formacion_puntos.puntos_id', 'puntos.id')
+        ->join('users','formacion_puntos.users_id', 'users.id')
+        ->join('formacion_niveles','formacion_niveles.formacion_puntos_id', '=', 'formacion_encuestados.formacion_puntos_id')
+        ->leftJoin('formacion_respuestas_1', 'formacion_respuestas_1.formacion_encuestados_id', '=', 'formacion_encuestados.id')
+        ->leftJoin('formacion_respuestas_2', 'formacion_respuestas_2.formacion_encuestados_id', '=', 'formacion_encuestados.id')
+        ->leftJoin('formacion_respuestas_3', 'formacion_respuestas_3.formacion_encuestados_id', '=', 'formacion_encuestados.id')
+        ->leftJoin('formacion_respuestas_4', 'formacion_respuestas_4.formacion_encuestados_id', '=', 'formacion_encuestados.id')
+        ->leftJoin('formacion_cartografia_3', 'formacion_cartografia_3.formacion_encuestados_id', '=', 'formacion_encuestados.id')
+        ->select(
+            "formacion_encuestados.*",
+            "users.name",
+            "users.documento",
+            "puntos.ciudad",
+            "puntos.nombre_punto",
+            "formacion_puntos.colectivo",
+            "formacion_puntos.ubicacion",
+            "formacion_niveles.nivel",
+            "formacion_niveles.fecha",
+            "formacion_niveles.hora",
+            "formacion_niveles.estado",
+            "formacion_respuestas_1.*",
+            "formacion_respuestas_2.*",
+            "formacion_respuestas_3.*",
+            "formacion_respuestas_4.*",
+            "formacion_cartografia_3.*",
+            )
+            
             ->where($campopR, $varpR, $signopR)
             ->whereBetween($campofR, array($signo1fR, $signo2fR))
-            ->select(
-                "formacion_encuestados.*",
-                "formacion_puntos.puntos_id",
-                "formacion_puntos.ubicacion",
-                "formacion_puntos.colectivo",
-                "formacion_niveles.nivel",
-                "formacion_niveles.fecha",
-                "formacion_niveles.hora",
-                "formacion_niveles.estado",
-            )
-            ->orderBy("formacion_encuestados.id", "DESC")
+            ->orderBy("formacion_encuestados.id", "ASC")
             ->distinct("formacion_encuestados.id")
             ->get();
+
             $spreadsheet = new Spreadsheet();
 
             $spreadsheet->getActiveSheet()->setTitle('Registros');
     
             $spreadsheet->setActiveSheetIndex(0)
+            
                 ->setCellValue('A1', 'ID')
                 ->setCellValue('B1', 'COLECTIVO')
                 ->setCellValue('C1', 'NOMBRE')
@@ -807,9 +908,132 @@ class AdminController extends Controller
 
 
 
-                ->setCellValue('CB1', 'PERSONA FORMADA')
+                ->setCellValue('CB1', 'CANTIDAD DE NIVELES')
                 ->setCellValue('CC1', 'PERSONA FORMADA');
 
+        $j = 2;
+        for ($i = 0; $i < count($registros); $i++) {
+            $spreadsheet->setActiveSheetIndex(0)
+            ->setCellValue('A'.$j, $registros[$i]->id)
+            ->setCellValue('B'.$j, $registros[$i]->colectivo)
+            ->setCellValue('C'.$j, $registros[$i]->nombre)
+            ->setCellValue('D'.$j, $registros[$i]->numero_documento)
+            ->setCellValue('E'.$j, $registros[$i]->numero_celular)
+            ->setCellValue('F'.$j, $registros[$i]->correo)
+            ->setCellValue('G'.$j, $registros[$i]->edad)
+            ->setCellValue('H'.$j, $registros[$i]->sexo)
+            ->setCellValue('I'.$j, $registros[$i]->nivel_escolaridad)
+            ->setCellValue('J'.$j, $registros[$i]->poblacion_vulnerable)
+
+
+
+            ->setCellValue('K'.$j, $registros[$i]->nombre_punto)
+            ->setCellValue('L'.$j, 'MUNICIPIO')
+            ->setCellValue('M'.$j, $registros[$i]->fecha)
+            ->setCellValue('N'.$j, $registros[$i]->hora)
+            ->setCellValue('O'.$j, $registros[$i]->ubicacion)
+            ->setCellValue('P'.$j, $registros[$i]->name)
+            ->setCellValue('Q'.$j, $registros[$i]->documento)
+
+
+
+            ->setCellValue('R'.$j, $registros[$i]->pregunta_1_pre_1)
+            ->setCellValue('S'.$j, $registros[$i]->pregunta_2_pre_1)
+            ->setCellValue('T'.$j, $registros[$i]->pregunta_3_pre_1)
+            ->setCellValue('U'.$j, $registros[$i]->pregunta_4_pre_1)
+            ->setCellValue('V'.$j, $registros[$i]->pregunta_5_pre_1)
+            ->setCellValue('W'.$j, $registros[$i]->calificacion_pre_1)
+
+            ->setCellValue('X'.$j, $registros[$i]->pregunta_1_post_1)
+            ->setCellValue('Y'.$j, $registros[$i]->pregunta_2_post_1)
+            ->setCellValue('Z'.$j, $registros[$i]->pregunta_3_post_1)
+            ->setCellValue('AA'.$j, $registros[$i]->pregunta_4_post_1)
+            ->setCellValue('AB'.$j, $registros[$i]->pregunta_5_post_1)
+            ->setCellValue('AC'.$j, $registros[$i]->calificacion_post_1)
+
+            ->setCellValue('AD'.$j, $registros[$i]->evaluacion_taller_1)
+            ->setCellValue('AE'.$j, $registros[$i]->importancia_informacion_1)
+
+
+
+            ->setCellValue('AF'.$j, $registros[$i]->pregunta_1_pre_2)
+            ->setCellValue('AG'.$j, $registros[$i]->pregunta_2_pre_2)
+            ->setCellValue('AH'.$j, $registros[$i]->pregunta_3_pre_2)
+            ->setCellValue('AI'.$j, $registros[$i]->pregunta_4_pre_2)
+            ->setCellValue('AJ'.$j, $registros[$i]->pregunta_5_pre_2)
+            ->setCellValue('AK'.$j, $registros[$i]->calificacion_pre_2)
+
+            ->setCellValue('AL'.$j, $registros[$i]->pregunta_1_post_2)
+            ->setCellValue('AM'.$j, $registros[$i]->pregunta_2_post_2)
+            ->setCellValue('AN'.$j, $registros[$i]->pregunta_3_post_2)
+            ->setCellValue('AO'.$j, $registros[$i]->pregunta_4_post_2)
+            ->setCellValue('AP'.$j, $registros[$i]->pregunta_5_post_2)
+            ->setCellValue('AQ'.$j, $registros[$i]->calificacion_post_2)
+
+            ->setCellValue('AR'.$j, $registros[$i]->evaluacion_taller_2)
+            ->setCellValue('AS'.$j, $registros[$i]->importancia_informacion_2)
+
+
+
+            ->setCellValue('AT'.$j, $registros[$i]->pregunta_1_pre_3)
+            ->setCellValue('AU'.$j, $registros[$i]->pregunta_2_pre_3)
+            ->setCellValue('AV'.$j, $registros[$i]->pregunta_3_pre_3)
+            ->setCellValue('AW'.$j, $registros[$i]->pregunta_4_pre_3)
+            ->setCellValue('AX'.$j, $registros[$i]->pregunta_5_pre_3)
+            ->setCellValue('AY'.$j, $registros[$i]->calificacion_pre_3)
+
+            ->setCellValue('AZ'.$j, $registros[$i]->pregunta_1_post_3)
+            ->setCellValue('BA'.$j, $registros[$i]->pregunta_2_post_3)
+            ->setCellValue('BB'.$j, $registros[$i]->pregunta_3_post_3)
+            ->setCellValue('BC'.$j, $registros[$i]->pregunta_4_post_3)
+            ->setCellValue('BD'.$j, $registros[$i]->pregunta_5_post_3)
+            ->setCellValue('BE'.$j, $registros[$i]->calificacion_post_3)
+
+            ->setCellValue('BF'.$j, $registros[$i]->evaluacion_taller_3)
+            ->setCellValue('BG'.$j, $registros[$i]->importancia_informacion_3)
+
+            ->setCellValue('BH'.$j, $registros[$i]->pregunta_1_car_3)
+            ->setCellValue('BI'.$j, $registros[$i]->pregunta_2_car_3)
+            ->setCellValue('BJ'.$j, $registros[$i]->pregunta_3_car_3)
+            ->setCellValue('BK'.$j, $registros[$i]->pregunta_4_car_3)
+            ->setCellValue('BL'.$j, $registros[$i]->pregunta_5_car_3)
+            ->setCellValue('BM'.$j, $registros[$i]->pregunta_6_car_3)
+
+
+
+            ->setCellValue('BN'.$j, $registros[$i]->pregunta_1_pre_4)
+            ->setCellValue('BO'.$j, $registros[$i]->pregunta_2_pre_4)
+            ->setCellValue('BP'.$j, $registros[$i]->pregunta_3_pre_4)
+            ->setCellValue('BQ'.$j, $registros[$i]->pregunta_4_pre_4)
+            ->setCellValue('BR'.$j, $registros[$i]->pregunta_5_pre_4)
+            ->setCellValue('BS'.$j, $registros[$i]->calificacion_pre_4)
+
+            ->setCellValue('BT'.$j, $registros[$i]->pregunta_1_post_4)
+            ->setCellValue('BU'.$j, $registros[$i]->pregunta_2_post_4)
+            ->setCellValue('BV'.$j, $registros[$i]->pregunta_3_post_4)
+            ->setCellValue('BW'.$j, $registros[$i]->pregunta_4_post_4)
+            ->setCellValue('BX'.$j, $registros[$i]->pregunta_5_post_4)
+            ->setCellValue('BY'.$j, $registros[$i]->calificacion_post_4)
+
+            ->setCellValue('BZ'.$j, $registros[$i]->evaluacion_taller_4)
+            ->setCellValue('CA'.$j, $registros[$i]->importancia_informacion_4)
+
+
+
+            ->setCellValue('CB'.$j, $registros[$i]->nivel)
+            ->setCellValue('CC'.$j, 'PERSONA FORMADA');
+            
+            $j++;
+        }
+        $spreadsheet->setActiveSheetIndex(0);
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="Encuestados.xlsx"');
+        header('Cache-Control: max-age=0');
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save('php://output');
+        
     }
 
     public function exportarExcelAcciones(Request $request)
