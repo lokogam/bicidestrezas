@@ -27,6 +27,12 @@
                                         class="btn bg-gradient-success mr-1 mb-1 waves-effect waves-light">Exportar
                                         Encuestados</button>
                                 </a>
+
+                                <a style="display: none" onclick="pdfproteccionmasivo();" id="pdfproteccionmasivo">
+                                    <button type="button"
+                                        class="btn bg-gradient-success mr-1 mb-1 waves-effect waves-light">PDF
+                                        Protección</button>
+                                </a>
                             </p>
 
                             <div class="row">
@@ -56,6 +62,35 @@
                                         </select>
                                     </div>
                                 </div>
+
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Filtro nivel</label>
+                                        <select class="select2 form-control" id="nivel" onchange="tabla()">
+                                            <option value=""></option>
+                                            @foreach ($niveles as $nivel)
+                                                    <option value="{{ $nivel->id }}"> nivel {{ $nivel->nivel }}
+                                                    </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>tags</label>
+                                        <select class="select2 form-control" id="campo" onchange="tabla()">
+                                            <option value=""></option>
+                                            @foreach ($campos as $campo)
+                                                <option >
+                                                    {{ $campo }} 
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
+                                
 
                                 <div class="col-md-2">
                                     <div class="form-group">
@@ -116,8 +151,10 @@
 
     <script>
         function tabla() {
-            var punto = $("#punto").val();
             var puntoFormacion = $("#colectivo").val();
+            var punto = $("#punto").val();
+            var nivel = $("#nivel").val();
+            var campo = $("#campo").val();
             var fecha = $("#fecha_desde").val();
             var fecha_H = $("#fecha_hasta").val();
 
@@ -139,6 +176,8 @@
 
             var parametros = {
                 "puntoR": punto,
+                "nivelF": nivel,
+                "nivelFP": campo,
                 "puntoRF": puntoFormacion,
                 "fechaR": fecha,
                 "fechahR": fecha_H,
@@ -158,12 +197,16 @@
 
         function reiniciarFiltros() {
             var puntoR = $("#punto").val('');
+            var nivelF = $("#nivel").val('');
+            var nivelFP = $("#campo").val('');
             var puntoRF = $("#colectivo").val('');
             var fechaR = $("#fecha_desde").val('');
             var fechahR = $("#fecha_hasta").val('');
 
             var parametros = {
                 "puntoR": '',
+                "nivelF": '',
+                "nivelFP": '',
                 "puntoRF": '',
                 "fechaR": '',
                 "filtro": 1

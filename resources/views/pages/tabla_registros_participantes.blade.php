@@ -33,13 +33,13 @@
             
             <th>
                 1
-                <input type="radio"  {{ $registro->calificacion_post_1 != '' ? 'checked' : 'disabled' }}>
+                <input type="radio"  {{ $registro->evaluacion_taller_1 != '' ? 'checked' : 'disabled' }}>
                 2
-                <input type="radio"  {{ $registro->calificacion_post_2 != '' ? 'checked' : 'disabled' }}>
+                <input type="radio"  {{ $registro->evaluacion_taller_2 != '' ? 'checked' : 'disabled' }}>
                 3
-                <input type="radio"  {{ $registro->calificacion_post_3 != '' ? 'checked' : 'disabled' }}>
+                <input type="radio"  {{ $registro->evaluacion_taller_3 != '' ? 'checked' : 'disabled' }}>
                 4
-                <input type="radio"  {{ $registro->calificacion_post_4 != '' ? 'checked' : 'disabled' }}>
+                <input type="radio"  {{ $registro->evaluacion_taller_4 != '' ? 'checked' : 'disabled' }}>
             </th>
         </tr>
             
@@ -61,6 +61,12 @@
 </table>
 
 <div class="pagination">
-    {{ $registros->appends([ 'puntoR' => Request::input('puntoR'), 'puntoRF' => Request::input('puntoRF'), 'fechaR' => Request::input('fechaR'), 'fechahR' =>
-    Request::input('fechahR')])->links() }}
+    {{ $registros->appends([ 
+        'nivelF' => Request::input('nivelF'),
+        'nivelFP' => Request::input('nivelFP'),
+        'puntoR' => Request::input('puntoR'), 
+        'puntoRF' => Request::input('puntoRF'),
+        'fechaR' => Request::input('fechaR'), 
+        'fechahR' => Request::input('fechahR')
+        ])->links() }}
 </div>

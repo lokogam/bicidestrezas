@@ -520,16 +520,29 @@ class AdminController extends Controller
         $fechaR   = $request->input('fechaR');
         $fechahR  = $request->input('fechahR');
         $nivelF  = $request->input('nivelF');
+        $nivelFP  = $request->input('nivelFP');
 
-        if (isset($nivelF) && !empty($nivelF)) {
-            $campopN = 'formacion_puntos.puntos_id';
-            $varpN = '=';
-            $signopN = '' . $nivelF . '';
+
+        if (isset($nivelF) && !empty($nivelF) && isset($nivelFP) && !empty($nivelFP)) {
+            $campoNP = 'formacion_respuestas_'. $nivelF .'.calificacion_'.$nivelFP.'_'.$nivelF ;
+            $varNP = '!=';
+            $signoNP = '';
         } else {
-            $campopN = 'formacion_puntos.id';
-            $varpN = '!=';
-            $signopN = '-3';
+            $campoNP = 'formacion_encuestados.formacion_puntos_id' ;
+            $varNP = '!=';
+            $signoNP = '-3';
         }
+
+        if (isset($nivelF ) && !empty($nivelF )) {
+            $campoN = 'formacion_respuestas_'. $nivelF .'.evaluacion_taller_'.$nivelF ;
+            $varN = '!=';
+            $signoN = '';
+        } else {
+            $campoN = 'formacion_encuestados.formacion_puntos_id' ;
+            $varN = '!=';
+            $signoN = '-3';
+        }
+
 
         if (isset($puntoR) && !empty($puntoR)) {
             $campopR = 'formacion_puntos.puntos_id';
@@ -578,7 +591,8 @@ class AdminController extends Controller
         ->leftJoin('formacion_respuestas_4', 'formacion_respuestas_4.formacion_encuestados_id', '=', 'formacion_encuestados.id')
         ->leftJoin('formacion_cartografia_3', 'formacion_cartografia_3.formacion_encuestados_id', '=', 'formacion_encuestados.id')
         ->where($campopR, $varpR, $signopR)
-        ->where($campopN, $varpN, $signopN)
+        ->where($campoN, $varN, $signoN)
+        ->where($campoNP, $varNP, $signoNP)
         ->where($campopRc, $varpRc, $signopRc)
         ->whereBetween($campofR, array($signo1fR, $signo2fR))
         ->select(
@@ -598,10 +612,10 @@ class AdminController extends Controller
             // "formacion_niveles.fecha",
             // "formacion_niveles.hora",
             "formacion_niveles.estado",
-            "formacion_respuestas_1.calificacion_post_1",
-            "formacion_respuestas_2.calificacion_post_2",
-            "formacion_respuestas_3.calificacion_post_3",
-            "formacion_respuestas_4.calificacion_post_4",
+            "formacion_respuestas_1.evaluacion_taller_1",
+            "formacion_respuestas_2.evaluacion_taller_2",
+            "formacion_respuestas_3.evaluacion_taller_3",
+            "formacion_respuestas_4.evaluacion_taller_4",
             // "formacion_cartografia_3.*",
         )
         ->orderBy("formacion_encuestados.id", "DESC")
@@ -620,7 +634,8 @@ class AdminController extends Controller
             ->leftJoin('formacion_respuestas_4', 'formacion_respuestas_4.formacion_encuestados_id', '=', 'formacion_encuestados.id')
             ->leftJoin('formacion_cartografia_3', 'formacion_cartografia_3.formacion_encuestados_id', '=', 'formacion_encuestados.id')
             ->where($campopR, $varpR, $signopR)
-            ->where($campopN, $varpN, $signopN)
+            ->where($campoN, $varN, $signoN)
+            ->where($campoNP, $varNP, $signoNP)
             ->where($campopRc, $varpRc, $signopRc)
             ->whereBetween($campofR, array($signo1fR, $signo2fR))
             ->select(
@@ -639,10 +654,10 @@ class AdminController extends Controller
                 // "formacion_niveles.fecha",
                 // "formacion_niveles.hora",
                 "formacion_niveles.estado",
-                "formacion_respuestas_1.calificacion_post_1",
-                "formacion_respuestas_2.calificacion_post_2",
-                "formacion_respuestas_3.calificacion_post_3",
-                "formacion_respuestas_4.calificacion_post_4",
+                "formacion_respuestas_1.evaluacion_taller_1",
+                "formacion_respuestas_2.evaluacion_taller_2",
+                "formacion_respuestas_3.evaluacion_taller_3",
+                "formacion_respuestas_4.evaluacion_taller_4",
                 // "formacion_cartografia_3.*",
             )
             ->orderBy("formacion_encuestados.id", "DESC")
@@ -659,9 +674,14 @@ class AdminController extends Controller
             ->select('puntos.*')
             ->get();
         
-        $niveles = DB::table('puntos')
-            ->select('puntos.*')
+        $niveles = DB::table('formacion_niveles')
+            ->select('formacion_niveles.*')
             ->get();
+        
+        $campos = [
+            'post',
+            'pre'
+        ];
 
         if ($request->input('filtro') && $request->input('filtro') == 1) {
                 return View::make('pages.tabla_registros_participantes')
@@ -669,6 +689,8 @@ class AdminController extends Controller
                     ->with('puntos', $puntos)
                     ->with('conteoR', $conteoR)
                     ->with('puntosFormacion', $puntosFormacion)
+                    ->with('niveles', $niveles)
+                    ->with('campos', $campos)
                     ;
             }
 
@@ -677,6 +699,8 @@ class AdminController extends Controller
                         ->with('conteoR', $conteoR)
                         ->with('puntos', $puntos)
                         ->with('puntosFormacion', $puntosFormacion)
+                        ->with('niveles', $niveles)
+                        ->with('campos', $campos)
                         ;
 
         // return response()->json( $registros);
