@@ -76,7 +76,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-3">
+                                <div class="col-md-3" style="display: none" id="tags">
                                     <div class="form-group">
                                         <label>tags</label>
                                         <select class="select2 form-control" id="campo" onchange="tabla()">
@@ -158,7 +158,12 @@
             var fecha = $("#fecha_desde").val();
             var fecha_H = $("#fecha_hasta").val();
 
-            
+            if (nivel != "") {
+                $('#tags').show();
+            }
+            else{
+                $('#tags').hide();
+            }
 
             if (fecha != "") {
                 if (fecha_H == "") {
@@ -174,15 +179,18 @@
                 }
             }
 
+
             var parametros = {
-                "puntoR": punto,
-                "nivelF": nivel,
-                "nivelFP": campo,
-                "puntoRF": puntoFormacion,
-                "fechaR": fecha,
-                "fechahR": fecha_H,
-                "filtro": 1
-            };
+                    "nivelF": nivel,
+                    "nivelFP": campo,
+                    
+                    "puntoRF": puntoFormacion,
+                    "puntoR": punto,
+                    "fechaR": fecha,
+                    "fechahR": fecha_H,
+                    "filtro": 1
+                };
+                
 
             $.ajax({
                 data: parametros,
@@ -196,17 +204,20 @@
         }
 
         function reiniciarFiltros() {
-            var puntoR = $("#punto").val('');
             var nivelF = $("#nivel").val('');
             var nivelFP = $("#campo").val('');
+            var puntoR = $("#punto").val('');
             var puntoRF = $("#colectivo").val('');
             var fechaR = $("#fecha_desde").val('');
             var fechahR = $("#fecha_hasta").val('');
 
+            $('#tags').hide();
+
             var parametros = {
-                "puntoR": '',
                 "nivelF": '',
                 "nivelFP": '',
+
+                "puntoR": '',
                 "puntoRF": '',
                 "fechaR": '',
                 "filtro": 1

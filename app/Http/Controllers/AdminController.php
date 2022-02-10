@@ -519,28 +519,31 @@ class AdminController extends Controller
         $puntoRF   = $request->input('puntoRF');
         $fechaR   = $request->input('fechaR');
         $fechahR  = $request->input('fechahR');
+
         $nivelF  = $request->input('nivelF');
         $nivelFP  = $request->input('nivelFP');
 
-
-        if (isset($nivelF) && !empty($nivelF) && isset($nivelFP) && !empty($nivelFP)) {
-            $campoNP = 'formacion_respuestas_'. $nivelF .'.calificacion_'.$nivelFP.'_'.$nivelF ;
-            $varNP = '!=';
-            $signoNP = '';
-        } else {
-            $campoNP = 'formacion_encuestados.formacion_puntos_id' ;
-            $varNP = '!=';
-            $signoNP = '-3';
-        }
-
-        if (isset($nivelF ) && !empty($nivelF )) {
-            $campoN = 'formacion_respuestas_'. $nivelF .'.evaluacion_taller_'.$nivelF ;
-            $varN = '!=';
-            $signoN = '';
-        } else {
-            $campoN = 'formacion_encuestados.formacion_puntos_id' ;
-            $varN = '!=';
-            $signoN = '-3';
+        if (isset($nivelFP) && !empty($nivelFP != ""  )) {
+            if (isset($nivelF) && !empty($nivelF) && isset($nivelFP) && !empty($nivelFP)) {
+                $campoN = 'formacion_respuestas_'. $nivelF .'.calificacion_'.$nivelFP.'_'.$nivelF ;
+                $varN = '!=';
+                $signoN = '';
+            } else {
+                $campoN = 'formacion_encuestados.id';
+                $varN = '!=';
+                $signoN = '-3';
+            }
+        } else  {
+            
+            if (isset($nivelF ) && !empty($nivelF )) {
+                $campoN = 'formacion_respuestas_'. $nivelF .'.evaluacion_taller_'.$nivelF ;
+                $varN = '!=';
+                $signoN = '';
+            } else {
+                $campoN = 'formacion_encuestados.id' ;
+                $varN = '!=';
+                $signoN = '-3';
+            }
         }
 
 
@@ -592,7 +595,6 @@ class AdminController extends Controller
         ->leftJoin('formacion_cartografia_3', 'formacion_cartografia_3.formacion_encuestados_id', '=', 'formacion_encuestados.id')
         ->where($campopR, $varpR, $signopR)
         ->where($campoN, $varN, $signoN)
-        ->where($campoNP, $varNP, $signoNP)
         ->where($campopRc, $varpRc, $signopRc)
         ->whereBetween($campofR, array($signo1fR, $signo2fR))
         ->select(
@@ -609,14 +611,13 @@ class AdminController extends Controller
             "formacion_puntos.colectivo",
             "formacion_puntos.ubicacion_espacio",
             "formacion_niveles.nivel",
-            // "formacion_niveles.fecha",
-            // "formacion_niveles.hora",
             "formacion_niveles.estado",
             "formacion_respuestas_1.evaluacion_taller_1",
             "formacion_respuestas_2.evaluacion_taller_2",
             "formacion_respuestas_3.evaluacion_taller_3",
             "formacion_respuestas_4.evaluacion_taller_4",
-            // "formacion_cartografia_3.*",
+
+
         )
         ->orderBy("formacion_encuestados.id", "DESC")
         ->distinct("formacion_encuestados.id")
@@ -635,7 +636,6 @@ class AdminController extends Controller
             ->leftJoin('formacion_cartografia_3', 'formacion_cartografia_3.formacion_encuestados_id', '=', 'formacion_encuestados.id')
             ->where($campopR, $varpR, $signopR)
             ->where($campoN, $varN, $signoN)
-            ->where($campoNP, $varNP, $signoNP)
             ->where($campopRc, $varpRc, $signopRc)
             ->whereBetween($campofR, array($signo1fR, $signo2fR))
             ->select(
@@ -651,14 +651,11 @@ class AdminController extends Controller
                 "formacion_puntos.colectivo",
                 "formacion_puntos.ubicacion_espacio",
                 "formacion_niveles.nivel",
-                // "formacion_niveles.fecha",
-                // "formacion_niveles.hora",
                 "formacion_niveles.estado",
                 "formacion_respuestas_1.evaluacion_taller_1",
                 "formacion_respuestas_2.evaluacion_taller_2",
                 "formacion_respuestas_3.evaluacion_taller_3",
                 "formacion_respuestas_4.evaluacion_taller_4",
-                // "formacion_cartografia_3.*",
             )
             ->orderBy("formacion_encuestados.id", "DESC")
             ->distinct("formacion_encuestados.id")
