@@ -43,7 +43,7 @@
                                         <select class="select2 form-control" id="punto" onchange="tabla()">
                                             <option value=""></option>
                                             @foreach ($puntos as $punto)
-                                                <option value="{{ $punto->id }}">{{ $punto->nombre_punto }} - {{ $punto->ubicacion }} 
+                                                <option value="{{ $punto->id}}">{{ $punto->nombre_punto }} - {{ $punto->ubicacion }} 
                                                     </option>
                                             @endforeach
                                         </select>
@@ -55,9 +55,15 @@
                                         <label>Filtro colectivo</label>
                                         <select class="select2 form-control" id="colectivo" onchange="tabla()">
                                             <option value=""></option>
-                                            @foreach ($puntosFormacion as $punto)
-                                                <option value="{{ $punto->id }}">{{ $punto->colectivo }} - {{ $punto->ubicacion_espacio }} 
-                                                    </option>
+                                                
+                                                {{-- @if ($puntoR != '')
+                                                    HOLA
+                                                @else
+                                                    MUNDO
+                                                @endif --}}
+                                            @foreach ($puntosFormacion  as $colectivo)
+                                                <option value="{{ $colectivo->id }}"> {{ $colectivo->colectivo }} - {{ $colectivo->ubicacion_espacio }} 
+                                                </option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -151,12 +157,27 @@
 
     <script>
         function tabla() {
-            var puntoFormacion = $("#colectivo").val();
+            var colectivo = $("#colectivo").val();
             var punto = $("#punto").val();
             var nivel = $("#nivel").val();
             var campo = $("#campo").val();
             var fecha = $("#fecha_desde").val();
             var fecha_H = $("#fecha_hasta").val();
+
+
+            const asa = @json($puntosFormacion);
+
+            if(punto != ""){
+                for (let i = 0; i<asa.length; i++) {
+                    var eje = asa[i];
+                    
+                    if(eje.puntos_id == punto){
+                        
+                        eje.id=colectivo 
+                    }
+                }
+            }
+
 
             if (nivel != "") {
                 $('#tags').show();
@@ -164,6 +185,7 @@
             else{
                 $('#tags').hide();
             }
+
 
             if (fecha != "") {
                 if (fecha_H == "") {
@@ -179,12 +201,11 @@
                 }
             }
 
-
             var parametros = {
                     "nivelF": nivel,
                     "nivelFP": campo,
                     
-                    "puntoRF": puntoFormacion,
+                    "puntoRF": colectivo,
                     "puntoR": punto,
                     "fechaR": fecha,
                     "fechahR": fecha_H,
@@ -261,6 +282,27 @@
                 }
             });
         }
+    </script>
+    <script type="text/javascript">
+        
+        const asa = @json($puntosFormacion);
+
+        punto = 7;
+            
+        if(punto != ""){
+                for (let i = 0; i<asa.length; i++) {
+                    var eje = asa[i];
+                        if(eje.puntos_id == punto){
+                            console.log(eje );
+                            console.log(eje.id );
+                        }
+                }
+            }
+
+
+        // console.log(punto[3]);
+        // console.log(colectivo[3]);
+
     </script>
 
 @endsection

@@ -523,6 +523,25 @@ class AdminController extends Controller
         $nivelF  = $request->input('nivelF');
         $nivelFP  = $request->input('nivelFP');
 
+        // if (isset($puntoR) && !empty($puntoR != ""  )) {
+            
+        //     $campo = 'formacion_puntos.puntos_id';
+        //     $var = '=';
+        //     $signo = '' . $puntoR . '';
+        //     $puntosFormacion = DB::table('formacion_puntos')
+        //         ->where($campo, $var, $signo)
+        //         ->select( 
+        //             "formacion_puntos.*",
+        //             )
+        //         ->get();
+        // }else {
+        //     $puntosFormacion = DB::table('formacion_puntos')
+        //         ->select( 
+        //             "formacion_puntos.*"
+        //         )
+        //         ->get();
+        //     }
+
         if (isset($nivelFP) && !empty($nivelFP != ""  )) {
             if (isset($nivelF) && !empty($nivelF) && isset($nivelFP) && !empty($nivelFP)) {
                 $campoN = 'formacion_respuestas_'. $nivelF .'.calificacion_'.$nivelFP.'_'.$nivelF ;
@@ -661,15 +680,20 @@ class AdminController extends Controller
             ->distinct("formacion_encuestados.id")
             ->get();
 
-            
-
-        $puntosFormacion = DB::table('formacion_puntos')
-            ->select("formacion_puntos.*")
-            ->get();
         
         $puntos = DB::table('puntos')
-            ->select('puntos.*')
+            ->join('formacion_puntos', 'puntos.id','formacion_puntos.puntos_id',)
+            ->select(
+                "puntos.*",
+                )
             ->get();
+
+        $puntosFormacion = DB::table('formacion_puntos')
+            ->select( 
+                "formacion_puntos.*"
+            )
+            ->get();
+            
         
         $niveles = DB::table('formacion_niveles')
             ->select('formacion_niveles.*')
@@ -682,25 +706,25 @@ class AdminController extends Controller
 
         if ($request->input('filtro') && $request->input('filtro') == 1) {
                 return View::make('pages.tabla_registros_participantes')
+                    ->with('puntosFormacion', $puntosFormacion)
                     ->with('registros', $registros)
                     ->with('puntos', $puntos)
                     ->with('conteoR', $conteoR)
-                    ->with('puntosFormacion', $puntosFormacion)
                     ->with('niveles', $niveles)
                     ->with('campos', $campos)
                     ;
             }
 
         return View::make('pages.registrosparticipantes')
+                        ->with('puntosFormacion', $puntosFormacion)
                         ->with('registros', $registros)
                         ->with('conteoR', $conteoR)
                         ->with('puntos', $puntos)
-                        ->with('puntosFormacion', $puntosFormacion)
                         ->with('niveles', $niveles)
                         ->with('campos', $campos)
                         ;
 
-        // return response()->json( $registros);
+        // return response()->json( $puntosFormacion);
 
     }
 
