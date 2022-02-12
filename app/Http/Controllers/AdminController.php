@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\FormacionPunto;
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -511,6 +512,14 @@ class AdminController extends Controller
         return view('pages/detalleFormacion', ['registro' => $registro]);
     }
 
+
+ public function filtroColectivo(Request $request){
+     $punto =$request->punto;
+     $puntosFormacion= FormacionPunto::where('puntos_id', $punto)->get();
+    //  return $punto;
+             return json_encode($puntosFormacion);
+
+ }
 
     //formacion_encuestados
     public function verRegistrosParticipantes(Request $request){

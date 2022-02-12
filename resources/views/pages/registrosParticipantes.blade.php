@@ -40,7 +40,7 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label>Filtro punto</label>
-                                        <select class="select2 form-control" id="punto" onchange="tabla()">
+                                        <select class="select2 form-control" id="punto" onchange="tabla(); filtroColectivo(); ">
                                             <option value=""></option>
                                             @foreach ($puntos as $punto)
                                                 <option value="{{ $punto->id}}">{{ $punto->nombre_punto }} - {{ $punto->ubicacion }} 
@@ -54,17 +54,11 @@
                                     <div class="form-group">
                                         <label>Filtro colectivo</label>
                                         <select class="select2 form-control" id="colectivo" onchange="tabla()">
-                                            <option value=""></option>
-                                                
-                                                {{-- @if ($puntoR != '')
-                                                    HOLA
-                                                @else
-                                                    MUNDO
-                                                @endif --}}
-                                            @foreach ($puntosFormacion  as $colectivo)
+                                            <option value=""></option>}
+                                            {{-- @foreach ($puntosFormacion  as $colectivo)
                                                 <option value="{{ $colectivo->id }}"> {{ $colectivo->colectivo }} - {{ $colectivo->ubicacion_espacio }} 
                                                 </option>
-                                            @endforeach
+                                            @endforeach --}}
                                         </select>
                                     </div>
                                 </div>
@@ -75,7 +69,7 @@
                                         <select class="select2 form-control" id="nivel" onchange="tabla()">
                                             <option value=""></option>
                                             @foreach ($niveles as $nivel)
-                                                    <option value="{{ $nivel->id }}"> nivel {{ $nivel->nivel }}
+                                                    <option   value="{{ $nivel->id }}"> nivel {{ $nivel->nivel }}
                                                     </option>
                                             @endforeach
                                         </select>
@@ -156,6 +150,44 @@
     </section>
 
     <script>
+
+        function filtroColectivo(){
+            let punto = $("#punto").val();
+            // console.log(punto)
+
+            let url = "{{ route('filtrocolectivos') }}";
+                $.ajax({
+
+                        url: url,
+                        type: "get",
+                        data: {
+                            punto: punto,
+                        },
+                    })
+                    .done(function(data) {
+                        if (data != null) {
+                            data = JSON.parse(data);
+                            // console.log(data)
+
+                            let colectivos = $('#colectivo');
+
+                            colectivos.find('option').remove();
+                            colectivos.append('<option value="0">seleccione</option>');
+                            $(data).each(function(i, v) { // indice, valor
+                                colectivos.append('<option value="' + v.id + '">' + v.colectivo +
+                                    '</option>');
+                            })
+
+                        } else {
+                            alert('No se pudo Cargar las colectivos');
+                        }
+
+                    })
+                    .fail(function(jqXHR, ajaxOptions, thrownError) {
+                        console.log(jqXHR, ajaxOptions, thrownError)
+                    });
+        }
+
         function tabla() {
             var colectivo = $("#colectivo").val();
             var punto = $("#punto").val();
@@ -164,9 +196,7 @@
             var fecha = $("#fecha_desde").val();
             var fecha_H = $("#fecha_hasta").val();
 
-
             const asa = @json($puntosFormacion);
-
             if(punto != ""){
                 for (let i = 0; i<asa.length; i++) {
                     var eje = asa[i];
@@ -178,14 +208,12 @@
                 }
             }
 
-
             if (nivel != "") {
                 $('#tags').show();
             }
             else{
                 $('#tags').hide();
             }
-
 
             if (fecha != "") {
                 if (fecha_H == "") {
@@ -283,27 +311,7 @@
             });
         }
     </script>
-    <script type="text/javascript">
-        
-        const asa = @json($puntosFormacion);
 
-        punto = 7;
-            
-        if(punto != ""){
-                for (let i = 0; i<asa.length; i++) {
-                    var eje = asa[i];
-                        if(eje.puntos_id == punto){
-                            console.log(eje );
-                            console.log(eje.id );
-                        }
-                }
-            }
-
-
-        // console.log(punto[3]);
-        // console.log(colectivo[3]);
-
-    </script>
 
 @endsection
 
