@@ -1,0 +1,27 @@
+diff a/app/Http/Controllers/AdminController.php b/app/Http/Controllers/AdminController.php	(rejected hunks)
+@@ -523,6 +523,25 @@
+         $nivelF  = $request->input('nivelF');
+         $nivelFP  = $request->input('nivelFP');
+ 
++        // if (isset($puntoR) && !empty($puntoR != ""  )) {
++            
++        //     $campo = 'formacion_puntos.puntos_id';
++        //     $var = '=';
++        //     $signo = '' . $puntoR . '';
++        //     $puntosFormacion = DB::table('formacion_puntos')
++        //         ->where($campo, $var, $signo)
++        //         ->select( 
++        //             "formacion_puntos.*",
++        //             )
++        //         ->get();
++        // }else {
++        //     $puntosFormacion = DB::table('formacion_puntos')
++        //         ->select( 
++        //             "formacion_puntos.*"
++        //         )
++        //         ->get();
++        //     }
++
+         if (isset($nivelFP) && !empty($nivelFP != ""  )) {
+             if (isset($nivelF) && !empty($nivelF) && isset($nivelFP) && !empty($nivelFP)) {
+                 $campoN = 'formacion_respuestas_'. $nivelF .'.calificacion_'.$nivelFP.'_'.$nivelF ;
