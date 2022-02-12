@@ -50,7 +50,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-3">
+                                <div class="col-md-3" style="display: none" id="tagscolectivo">
                                     <div class="form-group">
                                         <label>Filtro colectivo</label>
                                         <select class="select2 form-control" id="colectivo" onchange="tabla()">
@@ -206,6 +206,14 @@
                         eje.id=colectivo 
                     }
                 }
+            }
+
+            
+            if (punto != "") {
+                $('#tagscolectivo').show();
+            }
+            else{
+                $('#tagscolectivo').hide();
             }
 
             if (nivel != "") {
