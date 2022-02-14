@@ -518,6 +518,9 @@ class AdminController extends Controller
     {
         $punto = $request->punto;
         $puntosFormacion = FormacionPunto::where('puntos_id', $punto)->get();
+        // $puntosFormacion = DB::table('formacion_puntos')
+        //                         ->where($punto,"puntos_id")
+        //     ->get();
         //  return $punto;
         return json_encode($puntosFormacion);
     }

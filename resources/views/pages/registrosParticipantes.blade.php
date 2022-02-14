@@ -143,18 +143,18 @@
             let punto = $("#punto").val();
             // console.log(punto)
 
-            let url = "{{ route('filtrocolectivos') }}";
                 $.ajax({
 
-                        url: url,
+                        url: "{{ route('filtrocolectivos') }}",
                         type: "get",
                         data: {
                             punto: punto,
                         },
                     })
                     .done(function(data) {
-                        if (data != null) {
-                            data = JSON.parse(data);
+                        if (data != '') {
+                        // if (data != null) {
+                        data = JSON.parse(data);
                             // console.log(data)
 
                             let colectivos = $('#colectivo');
@@ -162,18 +162,19 @@
                             colectivos.find('option').remove();
                             colectivos.append('<option value="0">seleccione</option>');
                             $(data).each(function(i, v) { // indice, valor
-                                colectivos.append('<option value="' + v.id + '">' + v.colectivo +
+                                colectivos.append('<option value="' + v.id + '">' + v.colectivo +' - '+ v.ubicacion_espacio +
                                     '</option>');
                             })
 
-                        } else {
-                            alert('No se pudo Cargar las colectivos');
-                        }
+                        } 
+                        // else {
+                        //     alert('No se pudo Cargar las colectivos');
+                        // }
 
                     })
-                    .fail(function(jqXHR, ajaxOptions, thrownError) {
-                        console.log(jqXHR, ajaxOptions, thrownError)
-                    });
+                    // .fail(function(jqXHR, ajaxOptions, thrownError) {
+                    //     console.log(jqXHR, ajaxOptions, thrownError)
+                    // });
         }
 
         function tabla() {
