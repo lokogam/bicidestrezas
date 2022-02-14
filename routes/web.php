@@ -84,7 +84,7 @@ Route::middleware(['auth'])->group(function () {
 		Route::get('/acciones', 'AdminController@verRegistrosAcciones')->name('registrosacciones');
 
 		Route::get('/participantes', 'AdminController@verRegistrosParticipantes')->name('registrosparticipantes');
-
+// filtro
 		Route::get('/filtrocolectivo', 'AdminController@filtroColectivo')->name('filtrocolectivos');
 		
 		Route::get('/formacion', 'AdminController@verRegistrosFormacion')->name('registrosformacion');

@@ -512,8 +512,9 @@ class AdminController extends Controller
         return view('pages/detalleFormacion', ['registro' => $registro]);
     }
 
-
+//filtro colectivo
     public function filtroColectivo(Request $request)
+    // use App\FormacionPunto;
     {
         $punto = $request->punto;
         $puntosFormacion = FormacionPunto::where('puntos_id', $punto)->get();
@@ -533,24 +534,7 @@ class AdminController extends Controller
         $nivelF  = $request->input('nivelF');
         $nivelFP  = $request->input('nivelFP');
 
-        // if (isset($puntoR) && !empty($puntoR != ""  )) {
 
-        //     $campo = 'formacion_puntos.puntos_id';
-        //     $var = '=';
-        //     $signo = '' . $puntoR . '';
-        //     $puntosFormacion = DB::table('formacion_puntos')
-        //         ->where($campo, $var, $signo)
-        //         ->select( 
-        //             "formacion_puntos.*",
-        //             )
-        //         ->get();
-        // }else {
-        //     $puntosFormacion = DB::table('formacion_puntos')
-        //         ->select( 
-        //             "formacion_puntos.*"
-        //         )
-        //         ->get();
-        // }
 
         if (isset($nivelFP) && !empty($nivelFP != "")) {
             if (isset($nivelF) && !empty($nivelF) && isset($nivelFP) && !empty($nivelFP)) {

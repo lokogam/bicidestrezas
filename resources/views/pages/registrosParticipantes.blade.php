@@ -27,30 +27,9 @@
                                     class="btn bg-gradient-success mr-1 mb-1 waves-effect waves-light">Exportar
                                     Encuestados</button>
                             </a>
-
-                            <a style="display: none" onclick="pdfproteccionmasivo();" id="pdfproteccionmasivo">
-                                <button type="button"
-                                    class="btn bg-gradient-success mr-1 mb-1 waves-effect waves-light">PDF
-                                    Protección</button>
-                            </a>
                         </p>
 
                         <div class="row">
-
-<<<<<<< HEAD
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label>Filtro punto</label>
-                                    <select class="select2 form-control" id="punto" onchange="tabla();filtros()">
-                                        <option value=""></option>
-                                        @foreach ($puntos as $punto)
-                                        <option value="{{ $punto->id}}">
-                                            {{ $punto->nombre_punto }} - {{ $punto->ubicacion }}
-                                        </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-=======
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label>Filtro punto</label>
@@ -69,10 +48,6 @@
                                         <label>Filtro colectivo</label>
                                         <select class="select2 form-control" id="colectivo" onchange="tabla()">
                                             <option value=""></option>}
-                                            {{-- @foreach ($puntosFormacion  as $colectivo)
-                                                <option value="{{ $colectivo->id }}"> {{ $colectivo->colectivo }} - {{ $colectivo->ubicacion_espacio }} 
-                                                </option>
-                                            @endforeach --}}
                                         </select>
                                     </div>
                                 </div>
@@ -126,76 +101,8 @@
                                             value="Reiniciar Filtros">
                                     </div>
                                 </div>
-
->>>>>>> 3cf60fd554c2889819a7dd1f75d5b5f891845625
                             </div>
 
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label>Filtro colectivo</label>
-                                    <select class="select2 form-control" id="colectivo" onchange="tabla();filtros()" >
-                                        <option value=""></option>
-                                        {{-- @foreach ($puntosFormacion as $colectivo)
-                                            <option value="{{ $colectivo->id }}">
-                                                {{ $colectivo->colectivo }} - {{ $colectivo->ubicacion_espacio }}
-                                            </option>
-                                        @endforeach --}}
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label>Filtro nivel</label>
-                                    <select class="select2 form-control" id="nivel" onchange="tabla()">
-                                        <option value=""></option>
-                                        @foreach ($niveles as $nivel)
-                                        <option value="{{ $nivel->id }}"> nivel {{ $nivel->nivel }}
-                                        </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="col-md-3" style="display: none" id="tags">
-                                <div class="form-group">
-                                    <label>tags</label>
-                                    <select class="select2 form-control" id="campo" onchange="tabla()">
-                                        <option value=""></option>
-
-                                        @foreach ($campos as $campo)
-                                        <option>
-                                            {{ $campo }}
-                                        </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-
-
-
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    <label>Filtro fecha - desde</label>
-                                    <input type='date' class="form-control" id="fecha_desde" onchange="tabla()">
-                                </div>
-                            </div>
-
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    <label>Hasta</label>
-                                    <input type='date' class="form-control" id="fecha_hasta" onchange="tabla()">
-                                </div>
-                            </div>
-
-                            <div class="col-md-2">
-                                <div class="form-group"><br>
-                                    <input type='button' class="btn btn-info" onclick="reiniciarFiltros()"
-                                        value="Reiniciar Filtros">
-                                </div>
-                            </div>
-
-                        </div>
 
                         <div>
                             <div>
@@ -231,34 +138,7 @@
 
 </section>
 
-<<<<<<< HEAD
-<script>
-
-function filtros(){
-
-    // var colectivo = $("#colectivo").val();
-    var punto = $("#punto").val();
-
-    if(punto != ''){
-        var parametros = { "puntoR": punto,  };
-        
-        $.ajax({
-        data: parametros,
-        url: " {{ route('filtrosparticipantes') }}",
-        type: 'get',
-        success: function(html) {
-            $("#colectivo").html(html);
-        }
-    });
-    }
-
-}
-
-
-    function tabla() 
-=======
     <script>
-
         function filtroColectivo(){
             let punto = $("#punto").val();
             // console.log(punto)
@@ -297,28 +177,13 @@ function filtros(){
         }
 
         function tabla() {
->>>>>>> 3cf60fd554c2889819a7dd1f75d5b5f891845625
+
             var colectivo = $("#colectivo").val();
             var punto = $("#punto").val();
             var nivel = $("#nivel").val();
             var campo = $("#campo").val();
             var fecha = $("#fecha_desde").val();
             var fecha_H = $("#fecha_hasta").val();
-
-<<<<<<< HEAD
-=======
-            const asa = @json($puntosFormacion);
-            if(punto != ""){
-                for (let i = 0; i<asa.length; i++) {
-                    var eje = asa[i];
-                    
-                    if(eje.puntos_id == punto){
-                        
-                        eje.id=colectivo 
-                    }
-                }
-            }
-
             
             if (punto != "") {
                 $('#tagscolectivo').show();
@@ -326,7 +191,6 @@ function filtros(){
             else{
                 $('#tagscolectivo').hide();
             }
->>>>>>> 3cf60fd554c2889819a7dd1f75d5b5f891845625
 
             if (nivel != "") {
                 $('#tags').show();
@@ -430,12 +294,7 @@ function filtros(){
                 }
             });
         }
-<<<<<<< HEAD
 </script>
-=======
-    </script>
-
->>>>>>> 3cf60fd554c2889819a7dd1f75d5b5f891845625
 
 @endsection
 
