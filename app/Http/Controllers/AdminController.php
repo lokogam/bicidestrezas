@@ -516,11 +516,11 @@ class AdminController extends Controller
     public function filtroColectivo(Request $request)
     // use App\FormacionPunto;
     {
-        $punto = $request->punto;
+        $punto = $request->input('punto');
         $puntosFormacion = FormacionPunto::where('puntos_id', $punto)->get();
-        // $puntosFormacion = DB::table('formacion_puntos')
-        //                         ->where($punto,"puntos_id")
-        //     ->get();
+        $puntosFormacion = DB::table('formacion_puntos')
+                                ->where("puntos_id", $punto)
+            ->get();
         //  return $punto;
         return json_encode($puntosFormacion);
     }

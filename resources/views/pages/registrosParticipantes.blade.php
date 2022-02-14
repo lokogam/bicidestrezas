@@ -30,78 +30,80 @@
                         </p>
 
                         <div class="row">
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label>Filtro punto</label>
-                                        <select class="select2 form-control" id="punto" onchange="tabla(); filtroColectivo(); ">
-                                            <option value=""></option>
-                                            @foreach ($puntos as $punto)
-                                                <option value="{{ $punto->id}}">{{ $punto->nombre_punto }} - {{ $punto->ubicacion }} 
-                                                    </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-3" style="display: none" id="tagscolectivo">
-                                    <div class="form-group">
-                                        <label>Filtro colectivo</label>
-                                        <select class="select2 form-control" id="colectivo" onchange="tabla()">
-                                            <option value=""></option>}
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label>Filtro nivel</label>
-                                        <select class="select2 form-control" id="nivel" onchange="tabla()">
-                                            <option value=""></option>
-                                            @foreach ($niveles as $nivel)
-                                                    <option   value="{{ $nivel->id }}"> nivel {{ $nivel->nivel }}
-                                                    </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-3" style="display: none" id="tags">
-                                    <div class="form-group">
-                                        <label>tags</label>
-                                        <select class="select2 form-control" id="campo" onchange="tabla()">
-                                            <option value=""></option>
-                                            @foreach ($campos as $campo)
-                                                <option >
-                                                    {{ $campo }} 
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-
-                                
-
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label>Filtro fecha - desde</label>
-                                        <input type='date' class="form-control" id="fecha_desde" onchange="tabla()">
-                                    </div>
-                                </div>
-
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label>Hasta</label>
-                                        <input type='date' class="form-control" id="fecha_hasta" onchange="tabla()">
-                                    </div>
-                                </div>
-
-                                <div class="col-md-2">
-                                    <div class="form-group"><br>
-                                        <input type='button' class="btn btn-info" onclick="reiniciarFiltros()"
-                                            value="Reiniciar Filtros">
-                                    </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Filtro punto</label>
+                                    <select class="select2 form-control" id="punto"
+                                        onchange="filtroColectivo(); ">
+                                        <option value=""></option>
+                                        @foreach ($puntos as $punto)
+                                        <option value="{{ $punto->id}}">{{ $punto->nombre_punto }} - {{
+                                            $punto->ubicacion }}
+                                        </option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
+
+                            <div class="col-md-3" style="display: none" id="tagscolectivo">
+                                <div class="form-group">
+                                    <label>Filtro colectivo</label>
+                                    <select class="select2 form-control" id="colectivo" onchange="tabla()">
+                                        <option value=""></option>}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Filtro nivel</label>
+                                    <select class="select2 form-control" id="nivel" onchange="tabla()">
+                                        <option value=""></option>
+                                        @foreach ($niveles as $nivel)
+                                        <option value="{{ $nivel->id }}"> nivel {{ $nivel->nivel }}
+                                        </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3" style="display: none" id="tags">
+                                <div class="form-group">
+                                    <label>tags</label>
+                                    <select class="select2 form-control" id="campo" onchange="tabla()">
+                                        <option value=""></option>
+                                        @foreach ($campos as $campo)
+                                        <option>
+                                            {{ $campo }}
+                                        </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+
+
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label>Filtro fecha - desde</label>
+                                    <input type='date' class="form-control" id="fecha_desde" onchange="tabla()">
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label>Hasta</label>
+                                    <input type='date' class="form-control" id="fecha_hasta" onchange="tabla()">
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <div class="form-group"><br>
+                                    <input type='button' class="btn btn-info" onclick="reiniciarFiltros()"
+                                        value="Reiniciar Filtros">
+                                </div>
+                            </div>
+                        </div>
 
 
                         <div>
@@ -138,9 +140,10 @@
 
 </section>
 
-    <script>
-        function filtroColectivo(){
+<script>
+    function filtroColectivo(){
             let punto = $("#punto").val();
+            $('#colectivo').val('');
             // console.log(punto)
 
                 $.ajax({
@@ -153,6 +156,7 @@
                     })
                     .done(function(data) {
                         if (data != '') {
+                            
                         // if (data != null) {
                         data = JSON.parse(data);
                             // console.log(data)
@@ -175,6 +179,8 @@
                     // .fail(function(jqXHR, ajaxOptions, thrownError) {
                     //     console.log(jqXHR, ajaxOptions, thrownError)
                     // });
+
+                    tabla();
         }
 
         function tabla() {
