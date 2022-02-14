@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\FormacionPunto;
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -512,9 +513,18 @@ class AdminController extends Controller
     }
 
 
+    public function filtroColectivo(Request $request)
+    {
+        $punto = $request->punto;
+        $puntosFormacion = FormacionPunto::where('puntos_id', $punto)->get();
+        //  return $punto;
+        return json_encode($puntosFormacion);
+    }
+
     //formacion_encuestados
-    public function verRegistrosParticipantes(Request $request){
-        
+    public function verRegistrosParticipantes(Request $request)
+    {
+
         $puntoR   = $request->input('puntoR');
         $puntoRF   = $request->input('puntoRF');
         $fechaR   = $request->input('fechaR');
@@ -524,7 +534,7 @@ class AdminController extends Controller
         $nivelFP  = $request->input('nivelFP');
 
         // if (isset($puntoR) && !empty($puntoR != ""  )) {
-            
+
         //     $campo = 'formacion_puntos.puntos_id';
         //     $var = '=';
         //     $signo = '' . $puntoR . '';
@@ -542,9 +552,9 @@ class AdminController extends Controller
         //         ->get();
         // }
 
-        if (isset($nivelFP) && !empty($nivelFP != ""  )) {
+        if (isset($nivelFP) && !empty($nivelFP != "")) {
             if (isset($nivelF) && !empty($nivelF) && isset($nivelFP) && !empty($nivelFP)) {
-                $campoN = 'formacion_respuestas_'. $nivelF .'.calificacion_'.$nivelFP.'_'.$nivelF ;
+                $campoN = 'formacion_respuestas_' . $nivelF . '.calificacion_' . $nivelFP . '_' . $nivelF;
                 $varN = '!=';
                 $signoN = '';
             } else {
@@ -552,14 +562,14 @@ class AdminController extends Controller
                 $varN = '!=';
                 $signoN = '-3';
             }
-        } else  {
-            
-            if (isset($nivelF ) && !empty($nivelF )) {
-                $campoN = 'formacion_respuestas_'. $nivelF .'.evaluacion_taller_'.$nivelF ;
+        } else {
+
+            if (isset($nivelF) && !empty($nivelF)) {
+                $campoN = 'formacion_respuestas_' . $nivelF . '.evaluacion_taller_' . $nivelF;
                 $varN = '!=';
                 $signoN = '';
             } else {
-                $campoN = 'formacion_encuestados.id' ;
+                $campoN = 'formacion_encuestados.id';
                 $varN = '!=';
                 $signoN = '-3';
             }
@@ -575,7 +585,7 @@ class AdminController extends Controller
             $varpR = '!=';
             $signopR = '-3';
         }
-        
+
         if (isset($puntoRF) && !empty($puntoRF)) {
             $campopRc = 'formacion_encuestados.formacion_puntos_id';
             $varpRc = '=';
@@ -585,7 +595,7 @@ class AdminController extends Controller
             $varpRc = '!=';
             $signopRc = '-3';
         }
-        
+
         if (isset($fechaR) && !empty($fechaR) && isset($fechahR) && !empty($fechahR)) {
             $fecha = strtotime($fechahR);
             $fecha = date('Y-m-d', $fecha);
@@ -603,51 +613,51 @@ class AdminController extends Controller
         }
 
         $registros = DB::table('formacion_encuestados')
-        ->join('formacion_puntos', 'formacion_encuestados.formacion_puntos_id','formacion_puntos.id')
-        ->join('puntos','formacion_puntos.puntos_id', 'puntos.id')
-        ->join('users','formacion_puntos.users_id', 'users.id')
-        ->join('formacion_niveles','formacion_niveles.formacion_puntos_id', '=', 'formacion_encuestados.formacion_puntos_id')
-        ->leftJoin('formacion_respuestas_1', 'formacion_respuestas_1.formacion_encuestados_id', '=', 'formacion_encuestados.id')
-        ->leftJoin('formacion_respuestas_2', 'formacion_respuestas_2.formacion_encuestados_id', '=', 'formacion_encuestados.id')
-        ->leftJoin('formacion_respuestas_3', 'formacion_respuestas_3.formacion_encuestados_id', '=', 'formacion_encuestados.id')
-        ->leftJoin('formacion_respuestas_4', 'formacion_respuestas_4.formacion_encuestados_id', '=', 'formacion_encuestados.id')
-        ->leftJoin('formacion_cartografia_3', 'formacion_cartografia_3.formacion_encuestados_id', '=', 'formacion_encuestados.id')
-        ->where($campopR, $varpR, $signopR)
-        ->where($campoN, $varN, $signoN)
-        ->where($campopRc, $varpRc, $signopRc)
-        ->whereBetween($campofR, array($signo1fR, $signo2fR))
-        ->select(
-            "formacion_encuestados.id",
-            "formacion_encuestados.nombre",
-            "formacion_encuestados.numero_documento",
-            "formacion_encuestados.correo",
-            "formacion_encuestados.numero_celular",
-            "users.name",
-            "users.documento",
-            "puntos.ciudad",
-            "puntos.nombre_punto",
-            "puntos.ubicacion",
-            "formacion_puntos.colectivo",
-            "formacion_puntos.ubicacion_espacio",
-            "formacion_niveles.nivel",
-            "formacion_niveles.estado",
-            "formacion_respuestas_1.evaluacion_taller_1",
-            "formacion_respuestas_2.evaluacion_taller_2",
-            "formacion_respuestas_3.evaluacion_taller_3",
-            "formacion_respuestas_4.evaluacion_taller_4",
+            ->join('formacion_puntos', 'formacion_encuestados.formacion_puntos_id', 'formacion_puntos.id')
+            ->join('puntos', 'formacion_puntos.puntos_id', 'puntos.id')
+            ->join('users', 'formacion_puntos.users_id', 'users.id')
+            ->join('formacion_niveles', 'formacion_niveles.formacion_puntos_id', '=', 'formacion_encuestados.formacion_puntos_id')
+            ->leftJoin('formacion_respuestas_1', 'formacion_respuestas_1.formacion_encuestados_id', '=', 'formacion_encuestados.id')
+            ->leftJoin('formacion_respuestas_2', 'formacion_respuestas_2.formacion_encuestados_id', '=', 'formacion_encuestados.id')
+            ->leftJoin('formacion_respuestas_3', 'formacion_respuestas_3.formacion_encuestados_id', '=', 'formacion_encuestados.id')
+            ->leftJoin('formacion_respuestas_4', 'formacion_respuestas_4.formacion_encuestados_id', '=', 'formacion_encuestados.id')
+            ->leftJoin('formacion_cartografia_3', 'formacion_cartografia_3.formacion_encuestados_id', '=', 'formacion_encuestados.id')
+            ->where($campopR, $varpR, $signopR)
+            ->where($campoN, $varN, $signoN)
+            ->where($campopRc, $varpRc, $signopRc)
+            ->whereBetween($campofR, array($signo1fR, $signo2fR))
+            ->select(
+                "formacion_encuestados.id",
+                "formacion_encuestados.nombre",
+                "formacion_encuestados.numero_documento",
+                "formacion_encuestados.correo",
+                "formacion_encuestados.numero_celular",
+                "users.name",
+                "users.documento",
+                "puntos.ciudad",
+                "puntos.nombre_punto",
+                "puntos.ubicacion",
+                "formacion_puntos.colectivo",
+                "formacion_puntos.ubicacion_espacio",
+                "formacion_niveles.nivel",
+                "formacion_niveles.estado",
+                "formacion_respuestas_1.evaluacion_taller_1",
+                "formacion_respuestas_2.evaluacion_taller_2",
+                "formacion_respuestas_3.evaluacion_taller_3",
+                "formacion_respuestas_4.evaluacion_taller_4",
 
 
-        )
-        ->orderBy("formacion_encuestados.id", "DESC")
-        ->distinct("formacion_encuestados.id")
+            )
+            ->orderBy("formacion_encuestados.id", "DESC")
+            ->distinct("formacion_encuestados.id")
             ->paginate(50);
 
 
-            $conteoR = DB::table('formacion_encuestados')
-            ->join('formacion_puntos', 'formacion_encuestados.formacion_puntos_id','formacion_puntos.id')
-            ->join('puntos','formacion_puntos.puntos_id', 'puntos.id')
-            ->join('users','formacion_puntos.users_id', 'users.id')
-            ->join('formacion_niveles','formacion_niveles.formacion_puntos_id', '=', 'formacion_encuestados.formacion_puntos_id')
+        $conteoR = DB::table('formacion_encuestados')
+            ->join('formacion_puntos', 'formacion_encuestados.formacion_puntos_id', 'formacion_puntos.id')
+            ->join('puntos', 'formacion_puntos.puntos_id', 'puntos.id')
+            ->join('users', 'formacion_puntos.users_id', 'users.id')
+            ->join('formacion_niveles', 'formacion_niveles.formacion_puntos_id', '=', 'formacion_encuestados.formacion_puntos_id')
             ->leftJoin('formacion_respuestas_1', 'formacion_respuestas_1.formacion_encuestados_id', '=', 'formacion_encuestados.id')
             ->leftJoin('formacion_respuestas_2', 'formacion_respuestas_2.formacion_encuestados_id', '=', 'formacion_encuestados.id')
             ->leftJoin('formacion_respuestas_3', 'formacion_respuestas_3.formacion_encuestados_id', '=', 'formacion_encuestados.id')
@@ -680,49 +690,47 @@ class AdminController extends Controller
             ->distinct("formacion_encuestados.id")
             ->get();
 
-        
+
         $puntos = DB::table('puntos')
-            ->join('formacion_puntos', 'puntos.id','formacion_puntos.puntos_id',)
+            ->join('formacion_puntos', 'puntos.id', 'formacion_puntos.puntos_id',)
             ->select(
                 "puntos.*",
-                )
+            )
             ->get();
 
         $puntosFormacion = DB::table('formacion_puntos')
-            ->select( 
+            ->select(
                 "formacion_puntos.*"
             )
             ->get();
-            
-        
+
+
         $niveles = DB::table('formacion_niveles')
             ->select('formacion_niveles.*')
             ->get();
-        
+
         $campos = [
             'post',
             'pre'
         ];
 
         if ($request->input('filtro') && $request->input('filtro') == 1) {
-                return View::make('pages.tabla_registros_participantes')
-                    ->with('puntosFormacion', $puntosFormacion)
-                    ->with('registros', $registros)
-                    ->with('puntos', $puntos)
-                    ->with('conteoR', $conteoR)
-                    ->with('niveles', $niveles)
-                    ->with('campos', $campos)
-                    ;
-            }
+            return View::make('pages.tabla_registros_participantes')
+                ->with('puntosFormacion', $puntosFormacion)
+                ->with('registros', $registros)
+                ->with('puntos', $puntos)
+                ->with('conteoR', $conteoR)
+                ->with('niveles', $niveles)
+                ->with('campos', $campos);
+        }
 
         return View::make('pages.registrosparticipantes')
-                        ->with('puntosFormacion', $puntosFormacion)
-                        ->with('registros', $registros)
-                        ->with('conteoR', $conteoR)
-                        ->with('puntos', $puntos)
-                        ->with('niveles', $niveles)
-                        ->with('campos', $campos)
-                        ;
+            ->with('puntosFormacion', $puntosFormacion)
+            ->with('registros', $registros)
+            ->with('conteoR', $conteoR)
+            ->with('puntos', $puntos)
+            ->with('niveles', $niveles)
+            ->with('campos', $campos);
 
         // return response()->json( $puntosFormacion);
 
@@ -731,43 +739,43 @@ class AdminController extends Controller
     public function detalleParticipante(Request $request)
     {
         $registro = DB::table('formacion_encuestados')
-        ->join('formacion_puntos', 'formacion_encuestados.formacion_puntos_id','formacion_puntos.id')
-        ->join('puntos','formacion_puntos.puntos_id', 'puntos.id')
-        ->join('users','formacion_puntos.users_id', 'users.id')
-        ->join('formacion_niveles','formacion_niveles.formacion_puntos_id', '=', 'formacion_encuestados.formacion_puntos_id')
-        ->leftJoin('formacion_respuestas_1', 'formacion_respuestas_1.formacion_encuestados_id', '=', 'formacion_encuestados.id')
-        ->leftJoin('formacion_respuestas_2', 'formacion_respuestas_2.formacion_encuestados_id', '=', 'formacion_encuestados.id')
-        ->leftJoin('formacion_respuestas_3', 'formacion_respuestas_3.formacion_encuestados_id', '=', 'formacion_encuestados.id')
-        ->leftJoin('formacion_respuestas_4', 'formacion_respuestas_4.formacion_encuestados_id', '=', 'formacion_encuestados.id')
-        ->leftJoin('formacion_cartografia_3', 'formacion_cartografia_3.formacion_encuestados_id', '=', 'formacion_encuestados.id')
-        ->select(
-            "formacion_encuestados.firma",
-            "formacion_encuestados.numero_documento",
-            "formacion_encuestados.nombre",
-            "formacion_encuestados.numero_celular",
-            "formacion_encuestados.correo",
-            "formacion_encuestados.edad",
-            "formacion_encuestados.sexo",
-            "formacion_encuestados.nivel_escolaridad",
-            "formacion_encuestados.poblacion_vulnerable",
-            "users.name",
-            "users.documento",
-            "puntos.ciudad",
-            "puntos.nombre_punto",
-            "formacion_puntos.colectivo",
-            "formacion_puntos.ubicacion_espacio",
-            "formacion_niveles.nivel",
-            "formacion_niveles.fecha",
-            "formacion_niveles.hora",
-            "formacion_niveles.estado",
-            "formacion_respuestas_1.*",
-            "formacion_respuestas_2.*",
-            "formacion_respuestas_3.*",
-            "formacion_respuestas_4.*",
-            "formacion_cartografia_3.*",
-        )
-        
-        ->where('formacion_encuestados.id', $request->input('id'))
+            ->join('formacion_puntos', 'formacion_encuestados.formacion_puntos_id', 'formacion_puntos.id')
+            ->join('puntos', 'formacion_puntos.puntos_id', 'puntos.id')
+            ->join('users', 'formacion_puntos.users_id', 'users.id')
+            ->join('formacion_niveles', 'formacion_niveles.formacion_puntos_id', '=', 'formacion_encuestados.formacion_puntos_id')
+            ->leftJoin('formacion_respuestas_1', 'formacion_respuestas_1.formacion_encuestados_id', '=', 'formacion_encuestados.id')
+            ->leftJoin('formacion_respuestas_2', 'formacion_respuestas_2.formacion_encuestados_id', '=', 'formacion_encuestados.id')
+            ->leftJoin('formacion_respuestas_3', 'formacion_respuestas_3.formacion_encuestados_id', '=', 'formacion_encuestados.id')
+            ->leftJoin('formacion_respuestas_4', 'formacion_respuestas_4.formacion_encuestados_id', '=', 'formacion_encuestados.id')
+            ->leftJoin('formacion_cartografia_3', 'formacion_cartografia_3.formacion_encuestados_id', '=', 'formacion_encuestados.id')
+            ->select(
+                "formacion_encuestados.firma",
+                "formacion_encuestados.numero_documento",
+                "formacion_encuestados.nombre",
+                "formacion_encuestados.numero_celular",
+                "formacion_encuestados.correo",
+                "formacion_encuestados.edad",
+                "formacion_encuestados.sexo",
+                "formacion_encuestados.nivel_escolaridad",
+                "formacion_encuestados.poblacion_vulnerable",
+                "users.name",
+                "users.documento",
+                "puntos.ciudad",
+                "puntos.nombre_punto",
+                "formacion_puntos.colectivo",
+                "formacion_puntos.ubicacion_espacio",
+                "formacion_niveles.nivel",
+                "formacion_niveles.fecha",
+                "formacion_niveles.hora",
+                "formacion_niveles.estado",
+                "formacion_respuestas_1.*",
+                "formacion_respuestas_2.*",
+                "formacion_respuestas_3.*",
+                "formacion_respuestas_4.*",
+                "formacion_cartografia_3.*",
+            )
+
+            ->where('formacion_encuestados.id', $request->input('id'))
             ->get();
 
         return view('pages/detalleParticipante', ['registro' => $registro]);
@@ -775,7 +783,8 @@ class AdminController extends Controller
 
     }
 
-    public function exportarExcelParticipantes(Request $request){
+    public function exportarExcelParticipantes(Request $request)
+    {
         $puntoR   = $request->input('puntoR');
         $fechaR   = $request->input('fechaR');
         $fechahR  = $request->input('fechahR');
@@ -807,267 +816,267 @@ class AdminController extends Controller
         }
 
         $registros = DB::table('formacion_encuestados')
-        ->join('formacion_puntos', 'formacion_encuestados.formacion_puntos_id','formacion_puntos.id')
-        ->join('puntos','formacion_puntos.puntos_id', 'puntos.id')
-        ->join('users','formacion_puntos.users_id', 'users.id')
-        ->join('formacion_niveles','formacion_niveles.formacion_puntos_id', '=', 'formacion_encuestados.formacion_puntos_id')
-        ->leftJoin('formacion_respuestas_1', 'formacion_respuestas_1.formacion_encuestados_id', '=', 'formacion_encuestados.id')
-        ->leftJoin('formacion_respuestas_2', 'formacion_respuestas_2.formacion_encuestados_id', '=', 'formacion_encuestados.id')
-        ->leftJoin('formacion_respuestas_3', 'formacion_respuestas_3.formacion_encuestados_id', '=', 'formacion_encuestados.id')
-        ->leftJoin('formacion_respuestas_4', 'formacion_respuestas_4.formacion_encuestados_id', '=', 'formacion_encuestados.id')
-        ->leftJoin('formacion_cartografia_3', 'formacion_cartografia_3.formacion_encuestados_id', '=', 'formacion_encuestados.id')
-        ->select(
-            "formacion_encuestados.*",
-            "users.name",
-            "users.documento",
-            "puntos.ciudad",
-            "puntos.nombre_punto",
-            "formacion_puntos.colectivo",
-            "formacion_puntos.ubicacion",
-            "formacion_niveles.nivel",
-            "formacion_niveles.fecha",
-            "formacion_niveles.hora",
-            "formacion_niveles.estado",
-            "formacion_respuestas_1.*",
-            "formacion_respuestas_2.*",
-            "formacion_respuestas_3.*",
-            "formacion_respuestas_4.*",
-            "formacion_cartografia_3.*",
+            ->join('formacion_puntos', 'formacion_encuestados.formacion_puntos_id', 'formacion_puntos.id')
+            ->join('puntos', 'formacion_puntos.puntos_id', 'puntos.id')
+            ->join('users', 'formacion_puntos.users_id', 'users.id')
+            ->join('formacion_niveles', 'formacion_niveles.formacion_puntos_id', '=', 'formacion_encuestados.formacion_puntos_id')
+            ->leftJoin('formacion_respuestas_1', 'formacion_respuestas_1.formacion_encuestados_id', '=', 'formacion_encuestados.id')
+            ->leftJoin('formacion_respuestas_2', 'formacion_respuestas_2.formacion_encuestados_id', '=', 'formacion_encuestados.id')
+            ->leftJoin('formacion_respuestas_3', 'formacion_respuestas_3.formacion_encuestados_id', '=', 'formacion_encuestados.id')
+            ->leftJoin('formacion_respuestas_4', 'formacion_respuestas_4.formacion_encuestados_id', '=', 'formacion_encuestados.id')
+            ->leftJoin('formacion_cartografia_3', 'formacion_cartografia_3.formacion_encuestados_id', '=', 'formacion_encuestados.id')
+            ->select(
+                "formacion_encuestados.*",
+                "users.name",
+                "users.documento",
+                "puntos.ciudad",
+                "puntos.nombre_punto",
+                "formacion_puntos.colectivo",
+                "formacion_puntos.ubicacion",
+                "formacion_niveles.nivel",
+                "formacion_niveles.fecha",
+                "formacion_niveles.hora",
+                "formacion_niveles.estado",
+                "formacion_respuestas_1.*",
+                "formacion_respuestas_2.*",
+                "formacion_respuestas_3.*",
+                "formacion_respuestas_4.*",
+                "formacion_cartografia_3.*",
             )
-            
+
             ->where($campopR, $varpR, $signopR)
             ->whereBetween($campofR, array($signo1fR, $signo2fR))
             ->orderBy("formacion_encuestados.id", "ASC")
             ->distinct("formacion_encuestados.id")
             ->get();
 
-            $spreadsheet = new Spreadsheet();
+        $spreadsheet = new Spreadsheet();
 
-            $spreadsheet->getActiveSheet()->setTitle('Registros');
-    
-            $spreadsheet->setActiveSheetIndex(0)
-            
-                ->setCellValue('A1', 'ID')
-                ->setCellValue('B1', 'COLECTIVO')
-                ->setCellValue('C1', 'NOMBRE')
-                ->setCellValue('D1', 'CÉDULA')
-                ->setCellValue('E1', 'CELULAR')
-                ->setCellValue('F1', 'CORREO')
-                ->setCellValue('G1', 'EDAD (AÑOS)')
-                ->setCellValue('H1', 'SEXO')
-                ->setCellValue('I1', 'NIVEL DE ESCOLARIDAD')
-                ->setCellValue('J1', 'POBLACIÓN VULNERABLE')
+        $spreadsheet->getActiveSheet()->setTitle('Registros');
 
+        $spreadsheet->setActiveSheetIndex(0)
 
-
-                ->setCellValue('K1', 'DEPARTAMENTO')
-                ->setCellValue('L1', 'MUNICIPIO')
-                ->setCellValue('M1', 'FECHA')
-                ->setCellValue('N1', 'HORA')
-                ->setCellValue('O1', 'UBICACIÓN ESPACIO FORMATIVO')
-                ->setCellValue('P1', 'FORMADOR-A')
-                ->setCellValue('Q1', 'CÉDULA DEL ENCARGADO')
+            ->setCellValue('A1', 'ID')
+            ->setCellValue('B1', 'COLECTIVO')
+            ->setCellValue('C1', 'NOMBRE')
+            ->setCellValue('D1', 'CÉDULA')
+            ->setCellValue('E1', 'CELULAR')
+            ->setCellValue('F1', 'CORREO')
+            ->setCellValue('G1', 'EDAD (AÑOS)')
+            ->setCellValue('H1', 'SEXO')
+            ->setCellValue('I1', 'NIVEL DE ESCOLARIDAD')
+            ->setCellValue('J1', 'POBLACIÓN VULNERABLE')
 
 
 
-                ->setCellValue('R1', 'PRETEST: ¿LA BICICLETA ES?')
-                ->setCellValue('S1', 'PRETEST: ¿.USTED COMO CICLISTA ES?')
-                ->setCellValue('T1', 'PRETEST: LOS CICLISTAS NO DEBEN ADELANTAR A OTROS VEHÍCULOS POR LA  DERECHA O ENTRE VEHÍCULOS QUE TRANSITEN POR SUS RESPECTIVOS CARRILES')
-                ->setCellValue('U1', 'PRETEST: COMO NORMA DE TRÁNSITO, LOS CICLISTAS DEBEN TRANSITAR POR EL LADO DERECHO DE LA VÍA, A UN METRO Y MEDIO AL LADO DE LOS VEHÍCULOS. ')
-                ->setCellValue('V1', 'PRETEST: AL SUBIRSE A LA BICICLETA DEBE MANTENER LAS MANOS EN EL MANILLAR, CON DOS O TRES DEDOS EN LOS FRENOS Y AL ARRANCAR DEBE SOSTENERSE CON UN PIE EN EL SUELO Y CON EL OTRO PUESTO EN EL PEDAL. ')
-                ->setCellValue('W1', 'PRETEST: CALIFICACIÓN  PRE NIVEL 1')
-
-                ->setCellValue('X1', 'POSTEST: ¿LA BICICLETA ES?')
-                ->setCellValue('Y1', 'POSTEST: ¿.USTED COMO CICLISTA ES?')
-                ->setCellValue('Z1', 'POSTEST: LOS CICLISTAS NO DEBEN ADELANTAR A OTROS VEHÍCULOS POR LA  DERECHA O ENTRE VEHÍCULOS QUE TRANSITEN POR SUS RESPECTIVOS CARRILES')
-                ->setCellValue('AA1', 'POSTEST: COMO NORMA DE TRÁNSITO, LOS CICLISTAS DEBEN TRANSITAR POR EL LADO DERECHO DE LA VÍA, A UN METRO Y MEDIO AL LADO DE LOS VEHÍCULOS. ')
-                ->setCellValue('AB1', 'POSTEST: AL SUBIRSE A LA BICICLETA DEBE MANTENER LAS MANOS EN EL MANILLAR, CON DOS O TRES DEDOS EN LOS FRENOS Y AL ARRANCAR DEBE SOSTENERSE CON UN PIE EN EL SUELO Y CON EL OTRO PUESTO EN EL PEDAL. ')
-                ->setCellValue('AC1', 'POSTEST: CALIFICACIÓN POS NIVEL 1')
-
-                ->setCellValue('AD1', 'EVALUACIÓN DEL TALLER DE 1 A 5.')
-                ->setCellValue('AE1', 'IMPORTANCIA DE LA INFORMACIÓN RECIBIDA (1 A 5)')
+            ->setCellValue('K1', 'DEPARTAMENTO')
+            ->setCellValue('L1', 'MUNICIPIO')
+            ->setCellValue('M1', 'FECHA')
+            ->setCellValue('N1', 'HORA')
+            ->setCellValue('O1', 'UBICACIÓN ESPACIO FORMATIVO')
+            ->setCellValue('P1', 'FORMADOR-A')
+            ->setCellValue('Q1', 'CÉDULA DEL ENCARGADO')
 
 
 
-                ->setCellValue('AF1', 'PRETEST: CON LA BICICLETA SE DEBE TRANSITAR POR LAS CICLORRUTAS CUANDO LAS HAY; CUANDO NO LAS HAY, SE PUEDE TRANSITAR POR LA CALZADA OCUPANDO UN CARRIL, PREFERIBLEMENTE EL DERECHO. ')
-                ->setCellValue('AG1', 'PRETEST: EL ESPACIO PÚBLICO CORRESPONDE AL CONJUNTO DE INMUEBLES PÚBLICOS Y LOS ELEMENTOS ARQUITECTÓNICOS Y NATURALES DE LOS INMUEBLES PRIVADOS, DESTINADOS POR SU NATURALEZA, POR SU USO O AFECTACIÓN, A LA SATISFACCIÓN DE NECESIDADES URBANAS COLECTIVAS QUE TRANSCIENDEN, POR TANTO, LOS LÍMITES DE LOS INTERESES, INDIVIDUALES DE LOS HABITANTES.  ')
-                ->setCellValue('AH1', 'PRETEST: EL CASCO ES DE USO')
-                ->setCellValue('AI1', 'PRETEST: ¿CUÁL ES LA SEÑAL QUE SE DEBE HACER SI SE QUIERE GIRAR A LA DERECHA EN BICICLETA?:')
-                ->setCellValue('AJ1', 'PRETEST: . ¿CUÁL ES LA SEÑAL QUE SE DEBE HACER SI SE REQUIERE FRENAR EN BICICLETA?:')
-                ->setCellValue('AK1', 'PRETEST: CALIFICACIÓN PRE NIVEL 2')
+            ->setCellValue('R1', 'PRETEST: ¿LA BICICLETA ES?')
+            ->setCellValue('S1', 'PRETEST: ¿.USTED COMO CICLISTA ES?')
+            ->setCellValue('T1', 'PRETEST: LOS CICLISTAS NO DEBEN ADELANTAR A OTROS VEHÍCULOS POR LA  DERECHA O ENTRE VEHÍCULOS QUE TRANSITEN POR SUS RESPECTIVOS CARRILES')
+            ->setCellValue('U1', 'PRETEST: COMO NORMA DE TRÁNSITO, LOS CICLISTAS DEBEN TRANSITAR POR EL LADO DERECHO DE LA VÍA, A UN METRO Y MEDIO AL LADO DE LOS VEHÍCULOS. ')
+            ->setCellValue('V1', 'PRETEST: AL SUBIRSE A LA BICICLETA DEBE MANTENER LAS MANOS EN EL MANILLAR, CON DOS O TRES DEDOS EN LOS FRENOS Y AL ARRANCAR DEBE SOSTENERSE CON UN PIE EN EL SUELO Y CON EL OTRO PUESTO EN EL PEDAL. ')
+            ->setCellValue('W1', 'PRETEST: CALIFICACIÓN  PRE NIVEL 1')
 
-                ->setCellValue('AL1', 'POSTEST: CON LA BICICLETA SE DEBE TRANSITAR POR LAS CICLORRUTAS CUANDO LAS HAY; CUANDO NO LAS HAY, SE PUEDE TRANSITAR POR LA CALZADA OCUPANDO UN CARRIL, PREFERIBLEMENTE EL DERECHO. ')
-                ->setCellValue('AM1', 'POSTEST: EL ESPACIO PÚBLICO CORRESPONDE AL CONJUNTO DE INMUEBLES PÚBLICOS Y LOS ELEMENTOS ARQUITECTÓNICOS Y NATURALES DE LOS INMUEBLES PRIVADOS, DESTINADOS POR SU NATURALEZA, POR SU USO O AFECTACIÓN, A LA SATISFACCIÓN DE NECESIDADES URBANAS COLECTIVAS QUE TRANSCIENDEN, POR TANTO, LOS LÍMITES DE LOS INTERESES, INDIVIDUALES DE LOS HABITANTES.  ')
-                ->setCellValue('AN1', 'POSTEST: EL CASCO ES DE USO')
-                ->setCellValue('AO1', 'POSTEST: ¿CUÁL ES LA SEÑAL QUE SE DEBE HACER SI SE QUIERE GIRAR A LA DERECHA EN BICICLETA?:')
-                ->setCellValue('AP1', 'POSTEST: . ¿CUÁL ES LA SEÑAL QUE SE DEBE HACER SI SE REQUIERE FRENAR EN BICICLETA?:')
-                ->setCellValue('AQ1', 'POSTEST: CALIFICACIÓN POS NIVEL 2 ')
+            ->setCellValue('X1', 'POSTEST: ¿LA BICICLETA ES?')
+            ->setCellValue('Y1', 'POSTEST: ¿.USTED COMO CICLISTA ES?')
+            ->setCellValue('Z1', 'POSTEST: LOS CICLISTAS NO DEBEN ADELANTAR A OTROS VEHÍCULOS POR LA  DERECHA O ENTRE VEHÍCULOS QUE TRANSITEN POR SUS RESPECTIVOS CARRILES')
+            ->setCellValue('AA1', 'POSTEST: COMO NORMA DE TRÁNSITO, LOS CICLISTAS DEBEN TRANSITAR POR EL LADO DERECHO DE LA VÍA, A UN METRO Y MEDIO AL LADO DE LOS VEHÍCULOS. ')
+            ->setCellValue('AB1', 'POSTEST: AL SUBIRSE A LA BICICLETA DEBE MANTENER LAS MANOS EN EL MANILLAR, CON DOS O TRES DEDOS EN LOS FRENOS Y AL ARRANCAR DEBE SOSTENERSE CON UN PIE EN EL SUELO Y CON EL OTRO PUESTO EN EL PEDAL. ')
+            ->setCellValue('AC1', 'POSTEST: CALIFICACIÓN POS NIVEL 1')
 
-                ->setCellValue('AR1', 'EVALUACIÓN DEL TALLER DE 1 A 5.')
-                ->setCellValue('AS1', 'IMPORTANCIA DE LA INFORMACIÓN RECIBIDA (1 A 5)')
-
-
-
-                ->setCellValue('AT1', 'PRETEST: LOS PUNTOS CIEGOS SON POSICIONES ALREDEDOR DE UN VEHÍCULO QUE NO PUEDEN SER CONTROLADOS VISUALMENTE POR EL CONDUCTOR, Y ESTÁN PRESENTES TANTO EN CARROS COMO EN MOTOCICLETAS')
-                ->setCellValue('AU1', 'PRETEST: PARA CRUZAR UN OBSTÁCULO EN LA VÍA (HUECO, BACHE), EL O LA CICLISTA DEBE PODER: PARARSE EN LOS PEDALES PREVIO AL SUBIR O AL DESCENSO, LLEVAR EL CUERPO HACIA ATRÁS Y LEVANTAR LA RUEDA DELANTERA')
-                ->setCellValue('AV1', 'PRETEST: PARA DISMINUIR EL RIESGO DE NO SER VISIBLE PARA LOS DEMÁS ACTORES VIALES, EL O LA CICLISTA DEBE')
-                ->setCellValue('AW1', 'PRETEST: EN LA COTIDIANIDAD DE LA VÍA, SEGÚN LAS NORMAS DE TRÁNSITO, ¿QUIÉN TIENE LA PRIORIDAD? ')
-                ->setCellValue('AX1', 'PRETEST: PARA EVITAR LOS PUNTOS CIEGOS, EL O LA CICLISTA PUEDE:')
-                ->setCellValue('AY1', 'PRETEST:  CALIFICACIÓN PRE NIVEL 3')
-
-                ->setCellValue('AZ1', 'POSTEST: LOS PUNTOS CIEGOS SON POSICIONES ALREDEDOR DE UN VEHÍCULO QUE NO PUEDEN SER CONTROLADOS VISUALMENTE POR EL CONDUCTOR, Y ESTÁN PRESENTES TANTO EN CARROS COMO EN MOTOCICLETAS')
-                ->setCellValue('BA1', 'POSTEST: PARA CRUZAR UN OBSTÁCULO EN LA VÍA (HUECO, BACHE), EL O LA CICLISTA DEBE PODER: PARARSE EN LOS PEDALES PREVIO AL SUBIR O AL DESCENSO, LLEVAR EL CUERPO HACIA ATRÁS Y LEVANTAR LA RUEDA DELANTERA')
-                ->setCellValue('BB1', 'POSTEST: PARA DISMINUIR EL RIESGO DE NO SER VISIBLE PARA LOS DEMÁS ACTORES VIALES, EL O LA CICLISTA DEBE')
-                ->setCellValue('BC1', 'POSTEST: EN LA COTIDIANIDAD DE LA VÍA, SEGÚN LAS NORMAS DE TRÁNSITO, ¿QUIÉN TIENE LA PRIORIDAD? ')
-                ->setCellValue('BD1', 'POSTEST: PARA EVITAR LOS PUNTOS CIEGOS, EL O LA CICLISTA PUEDE:')
-                ->setCellValue('BE1', 'POSTEST: CALIFICACIÓN POS NIVEL 3')
-
-                ->setCellValue('BF1', 'EVALUACIÓN DEL TALLER DE 1 A 5.')
-                ->setCellValue('BG1', 'IMPORTANCIA DE LA INFORMACIÓN RECIBIDA (1 A 5)')
-
-                ->setCellValue('BH1', 'CARTOGRAFÍA: ¿Para qué utiliza la bicicleta?')
-                ->setCellValue('BI1', 'CARTOGRAFÍA: ¿Cuál es el tiempo diario que dura conduciendo bicicleta?')
-                ->setCellValue('BJ1', 'CARTOGRAFÍA: ¿Cómo considera usted que se encuentra la malla vial por donde transita habitualmente?')
-                ->setCellValue('BK1', 'CARTOGRAFÍA: ¿Cuál es el riesgo social más relevante que tiene su trayecto habitual? ')
-                ->setCellValue('BL1', 'CARTOGRAFÍA: ¿Cuál es el riesgo ambientale más relevante que tiene su trayecto habitual?')
-                ->setCellValue('BM1', 'CARTOGRAFÍA: ¿Cuál es el riesgo tecnológico más relevante que tiene su trayecto habitual?')
+            ->setCellValue('AD1', 'EVALUACIÓN DEL TALLER DE 1 A 5.')
+            ->setCellValue('AE1', 'IMPORTANCIA DE LA INFORMACIÓN RECIBIDA (1 A 5)')
 
 
 
-                ->setCellValue('BN1', 'PRETEST: ES IMPORTANTE QUE SE COMPRUEBE LOS CIERRES DE LAS RUEDAS, PARA ESO ES NECESARIO ASEGURARSE DE QUE ESTÉN BIEN APRETADOS')
-                ->setCellValue('BO1', 'PRETEST: ES EL SISTEMA QUE PERMITE CONDUCIR LA BICICLETA Y DIRIGIRLA HACIA DONDE SE QUIERE, UTILIZANDO LAS MANOS PARA CONTROLARLA.')
-                ->setCellValue('BP1', 'PRETEST: LA PREPARACIÓN COMPLETA DE LA BICICLETA IMPLICA LA REVISIÓN DE LOS FRENOS Y LAS RUEDAS')
-                ->setCellValue('BQ1', 'PRETEST: LOS PLATOS Y LOS PIÑONES HACEN PARTE DE ESTE SISTEMA DE LA BICICLETA')
-                ->setCellValue('BR1', 'PRETEST: ANTES DE LUBRICAR LA CADENA NO ES RECOMENDABLE LIMPIARLA, SE APLICA DIRECTAMENTE EL LUBRICANTE DE SU PREFERENCIA, PARA EVITAR MAYORES DESGASTES Y DESAJUSTES')
-                ->setCellValue('BS1', 'PRETEST: CALIFICACIÓN PRE NIVEL 4')
+            ->setCellValue('AF1', 'PRETEST: CON LA BICICLETA SE DEBE TRANSITAR POR LAS CICLORRUTAS CUANDO LAS HAY; CUANDO NO LAS HAY, SE PUEDE TRANSITAR POR LA CALZADA OCUPANDO UN CARRIL, PREFERIBLEMENTE EL DERECHO. ')
+            ->setCellValue('AG1', 'PRETEST: EL ESPACIO PÚBLICO CORRESPONDE AL CONJUNTO DE INMUEBLES PÚBLICOS Y LOS ELEMENTOS ARQUITECTÓNICOS Y NATURALES DE LOS INMUEBLES PRIVADOS, DESTINADOS POR SU NATURALEZA, POR SU USO O AFECTACIÓN, A LA SATISFACCIÓN DE NECESIDADES URBANAS COLECTIVAS QUE TRANSCIENDEN, POR TANTO, LOS LÍMITES DE LOS INTERESES, INDIVIDUALES DE LOS HABITANTES.  ')
+            ->setCellValue('AH1', 'PRETEST: EL CASCO ES DE USO')
+            ->setCellValue('AI1', 'PRETEST: ¿CUÁL ES LA SEÑAL QUE SE DEBE HACER SI SE QUIERE GIRAR A LA DERECHA EN BICICLETA?:')
+            ->setCellValue('AJ1', 'PRETEST: . ¿CUÁL ES LA SEÑAL QUE SE DEBE HACER SI SE REQUIERE FRENAR EN BICICLETA?:')
+            ->setCellValue('AK1', 'PRETEST: CALIFICACIÓN PRE NIVEL 2')
 
-                ->setCellValue('BT1', 'POSTEST: ES IMPORTANTE QUE SE COMPRUEBE LOS CIERRES DE LAS RUEDAS, PARA ESO ES NECESARIO ASEGURARSE DE QUE ESTÉN BIEN APRETADOS')
-                ->setCellValue('BU1', 'POSTEST: ES EL SISTEMA QUE PERMITE CONDUCIR LA BICICLETA Y DIRIGIRLA HACIA DONDE SE QUIERE, UTILIZANDO LAS MANOS PARA CONTROLARLA.')
-                ->setCellValue('BV1', 'POSTEST: LA PREPARACIÓN COMPLETA DE LA BICICLETA IMPLICA LA REVISIÓN DE LOS FRENOS Y LAS RUEDAS')
-                ->setCellValue('BW1', 'POSTEST: LOS PLATOS Y LOS PIÑONES HACEN PARTE DE ESTE SISTEMA DE LA BICICLETA')
-                ->setCellValue('BX1', 'POSTEST: ANTES DE LUBRICAR LA CADENA NO ES RECOMENDABLE LIMPIARLA, SE APLICA DIRECTAMENTE EL LUBRICANTE DE SU PREFERENCIA, PARA EVITAR MAYORES DESGASTES Y DESAJUSTES')
-                ->setCellValue('BY1', 'POSTEST: CALIFICACIÓN POS NIVEL 4')
+            ->setCellValue('AL1', 'POSTEST: CON LA BICICLETA SE DEBE TRANSITAR POR LAS CICLORRUTAS CUANDO LAS HAY; CUANDO NO LAS HAY, SE PUEDE TRANSITAR POR LA CALZADA OCUPANDO UN CARRIL, PREFERIBLEMENTE EL DERECHO. ')
+            ->setCellValue('AM1', 'POSTEST: EL ESPACIO PÚBLICO CORRESPONDE AL CONJUNTO DE INMUEBLES PÚBLICOS Y LOS ELEMENTOS ARQUITECTÓNICOS Y NATURALES DE LOS INMUEBLES PRIVADOS, DESTINADOS POR SU NATURALEZA, POR SU USO O AFECTACIÓN, A LA SATISFACCIÓN DE NECESIDADES URBANAS COLECTIVAS QUE TRANSCIENDEN, POR TANTO, LOS LÍMITES DE LOS INTERESES, INDIVIDUALES DE LOS HABITANTES.  ')
+            ->setCellValue('AN1', 'POSTEST: EL CASCO ES DE USO')
+            ->setCellValue('AO1', 'POSTEST: ¿CUÁL ES LA SEÑAL QUE SE DEBE HACER SI SE QUIERE GIRAR A LA DERECHA EN BICICLETA?:')
+            ->setCellValue('AP1', 'POSTEST: . ¿CUÁL ES LA SEÑAL QUE SE DEBE HACER SI SE REQUIERE FRENAR EN BICICLETA?:')
+            ->setCellValue('AQ1', 'POSTEST: CALIFICACIÓN POS NIVEL 2 ')
 
-                ->setCellValue('BZ1', 'EVALUACIÓN DEL TALLER DE 1 A 5.')
-                ->setCellValue('CA1', 'IMPORTANCIA DE LA INFORMACIÓN RECIBIDA (1 A 5)')
+            ->setCellValue('AR1', 'EVALUACIÓN DEL TALLER DE 1 A 5.')
+            ->setCellValue('AS1', 'IMPORTANCIA DE LA INFORMACIÓN RECIBIDA (1 A 5)')
 
 
 
-                ->setCellValue('CB1', 'CANTIDAD DE NIVELES')
-                ->setCellValue('CC1', 'PERSONA FORMADA');
+            ->setCellValue('AT1', 'PRETEST: LOS PUNTOS CIEGOS SON POSICIONES ALREDEDOR DE UN VEHÍCULO QUE NO PUEDEN SER CONTROLADOS VISUALMENTE POR EL CONDUCTOR, Y ESTÁN PRESENTES TANTO EN CARROS COMO EN MOTOCICLETAS')
+            ->setCellValue('AU1', 'PRETEST: PARA CRUZAR UN OBSTÁCULO EN LA VÍA (HUECO, BACHE), EL O LA CICLISTA DEBE PODER: PARARSE EN LOS PEDALES PREVIO AL SUBIR O AL DESCENSO, LLEVAR EL CUERPO HACIA ATRÁS Y LEVANTAR LA RUEDA DELANTERA')
+            ->setCellValue('AV1', 'PRETEST: PARA DISMINUIR EL RIESGO DE NO SER VISIBLE PARA LOS DEMÁS ACTORES VIALES, EL O LA CICLISTA DEBE')
+            ->setCellValue('AW1', 'PRETEST: EN LA COTIDIANIDAD DE LA VÍA, SEGÚN LAS NORMAS DE TRÁNSITO, ¿QUIÉN TIENE LA PRIORIDAD? ')
+            ->setCellValue('AX1', 'PRETEST: PARA EVITAR LOS PUNTOS CIEGOS, EL O LA CICLISTA PUEDE:')
+            ->setCellValue('AY1', 'PRETEST:  CALIFICACIÓN PRE NIVEL 3')
+
+            ->setCellValue('AZ1', 'POSTEST: LOS PUNTOS CIEGOS SON POSICIONES ALREDEDOR DE UN VEHÍCULO QUE NO PUEDEN SER CONTROLADOS VISUALMENTE POR EL CONDUCTOR, Y ESTÁN PRESENTES TANTO EN CARROS COMO EN MOTOCICLETAS')
+            ->setCellValue('BA1', 'POSTEST: PARA CRUZAR UN OBSTÁCULO EN LA VÍA (HUECO, BACHE), EL O LA CICLISTA DEBE PODER: PARARSE EN LOS PEDALES PREVIO AL SUBIR O AL DESCENSO, LLEVAR EL CUERPO HACIA ATRÁS Y LEVANTAR LA RUEDA DELANTERA')
+            ->setCellValue('BB1', 'POSTEST: PARA DISMINUIR EL RIESGO DE NO SER VISIBLE PARA LOS DEMÁS ACTORES VIALES, EL O LA CICLISTA DEBE')
+            ->setCellValue('BC1', 'POSTEST: EN LA COTIDIANIDAD DE LA VÍA, SEGÚN LAS NORMAS DE TRÁNSITO, ¿QUIÉN TIENE LA PRIORIDAD? ')
+            ->setCellValue('BD1', 'POSTEST: PARA EVITAR LOS PUNTOS CIEGOS, EL O LA CICLISTA PUEDE:')
+            ->setCellValue('BE1', 'POSTEST: CALIFICACIÓN POS NIVEL 3')
+
+            ->setCellValue('BF1', 'EVALUACIÓN DEL TALLER DE 1 A 5.')
+            ->setCellValue('BG1', 'IMPORTANCIA DE LA INFORMACIÓN RECIBIDA (1 A 5)')
+
+            ->setCellValue('BH1', 'CARTOGRAFÍA: ¿Para qué utiliza la bicicleta?')
+            ->setCellValue('BI1', 'CARTOGRAFÍA: ¿Cuál es el tiempo diario que dura conduciendo bicicleta?')
+            ->setCellValue('BJ1', 'CARTOGRAFÍA: ¿Cómo considera usted que se encuentra la malla vial por donde transita habitualmente?')
+            ->setCellValue('BK1', 'CARTOGRAFÍA: ¿Cuál es el riesgo social más relevante que tiene su trayecto habitual? ')
+            ->setCellValue('BL1', 'CARTOGRAFÍA: ¿Cuál es el riesgo ambientale más relevante que tiene su trayecto habitual?')
+            ->setCellValue('BM1', 'CARTOGRAFÍA: ¿Cuál es el riesgo tecnológico más relevante que tiene su trayecto habitual?')
+
+
+
+            ->setCellValue('BN1', 'PRETEST: ES IMPORTANTE QUE SE COMPRUEBE LOS CIERRES DE LAS RUEDAS, PARA ESO ES NECESARIO ASEGURARSE DE QUE ESTÉN BIEN APRETADOS')
+            ->setCellValue('BO1', 'PRETEST: ES EL SISTEMA QUE PERMITE CONDUCIR LA BICICLETA Y DIRIGIRLA HACIA DONDE SE QUIERE, UTILIZANDO LAS MANOS PARA CONTROLARLA.')
+            ->setCellValue('BP1', 'PRETEST: LA PREPARACIÓN COMPLETA DE LA BICICLETA IMPLICA LA REVISIÓN DE LOS FRENOS Y LAS RUEDAS')
+            ->setCellValue('BQ1', 'PRETEST: LOS PLATOS Y LOS PIÑONES HACEN PARTE DE ESTE SISTEMA DE LA BICICLETA')
+            ->setCellValue('BR1', 'PRETEST: ANTES DE LUBRICAR LA CADENA NO ES RECOMENDABLE LIMPIARLA, SE APLICA DIRECTAMENTE EL LUBRICANTE DE SU PREFERENCIA, PARA EVITAR MAYORES DESGASTES Y DESAJUSTES')
+            ->setCellValue('BS1', 'PRETEST: CALIFICACIÓN PRE NIVEL 4')
+
+            ->setCellValue('BT1', 'POSTEST: ES IMPORTANTE QUE SE COMPRUEBE LOS CIERRES DE LAS RUEDAS, PARA ESO ES NECESARIO ASEGURARSE DE QUE ESTÉN BIEN APRETADOS')
+            ->setCellValue('BU1', 'POSTEST: ES EL SISTEMA QUE PERMITE CONDUCIR LA BICICLETA Y DIRIGIRLA HACIA DONDE SE QUIERE, UTILIZANDO LAS MANOS PARA CONTROLARLA.')
+            ->setCellValue('BV1', 'POSTEST: LA PREPARACIÓN COMPLETA DE LA BICICLETA IMPLICA LA REVISIÓN DE LOS FRENOS Y LAS RUEDAS')
+            ->setCellValue('BW1', 'POSTEST: LOS PLATOS Y LOS PIÑONES HACEN PARTE DE ESTE SISTEMA DE LA BICICLETA')
+            ->setCellValue('BX1', 'POSTEST: ANTES DE LUBRICAR LA CADENA NO ES RECOMENDABLE LIMPIARLA, SE APLICA DIRECTAMENTE EL LUBRICANTE DE SU PREFERENCIA, PARA EVITAR MAYORES DESGASTES Y DESAJUSTES')
+            ->setCellValue('BY1', 'POSTEST: CALIFICACIÓN POS NIVEL 4')
+
+            ->setCellValue('BZ1', 'EVALUACIÓN DEL TALLER DE 1 A 5.')
+            ->setCellValue('CA1', 'IMPORTANCIA DE LA INFORMACIÓN RECIBIDA (1 A 5)')
+
+
+
+            ->setCellValue('CB1', 'CANTIDAD DE NIVELES')
+            ->setCellValue('CC1', 'PERSONA FORMADA');
 
         $j = 2;
         for ($i = 0; $i < count($registros); $i++) {
             $spreadsheet->setActiveSheetIndex(0)
-            ->setCellValue('A'.$j, $registros[$i]->id)
-            ->setCellValue('B'.$j, $registros[$i]->colectivo)
-            ->setCellValue('C'.$j, $registros[$i]->nombre)
-            ->setCellValue('D'.$j, $registros[$i]->numero_documento)
-            ->setCellValue('E'.$j, $registros[$i]->numero_celular)
-            ->setCellValue('F'.$j, $registros[$i]->correo)
-            ->setCellValue('G'.$j, $registros[$i]->edad)
-            ->setCellValue('H'.$j, $registros[$i]->sexo)
-            ->setCellValue('I'.$j, $registros[$i]->nivel_escolaridad)
-            ->setCellValue('J'.$j, $registros[$i]->poblacion_vulnerable)
+                ->setCellValue('A' . $j, $registros[$i]->id)
+                ->setCellValue('B' . $j, $registros[$i]->colectivo)
+                ->setCellValue('C' . $j, $registros[$i]->nombre)
+                ->setCellValue('D' . $j, $registros[$i]->numero_documento)
+                ->setCellValue('E' . $j, $registros[$i]->numero_celular)
+                ->setCellValue('F' . $j, $registros[$i]->correo)
+                ->setCellValue('G' . $j, $registros[$i]->edad)
+                ->setCellValue('H' . $j, $registros[$i]->sexo)
+                ->setCellValue('I' . $j, $registros[$i]->nivel_escolaridad)
+                ->setCellValue('J' . $j, $registros[$i]->poblacion_vulnerable)
 
 
 
-            ->setCellValue('K'.$j, $registros[$i]->nombre_punto)
-            ->setCellValue('L'.$j, 'MUNICIPIO')
-            ->setCellValue('M'.$j, $registros[$i]->fecha)
-            ->setCellValue('N'.$j, $registros[$i]->hora)
-            ->setCellValue('O'.$j, $registros[$i]->ubicacion)
-            ->setCellValue('P'.$j, $registros[$i]->name)
-            ->setCellValue('Q'.$j, $registros[$i]->documento)
+                ->setCellValue('K' . $j, $registros[$i]->nombre_punto)
+                ->setCellValue('L' . $j, 'MUNICIPIO')
+                ->setCellValue('M' . $j, $registros[$i]->fecha)
+                ->setCellValue('N' . $j, $registros[$i]->hora)
+                ->setCellValue('O' . $j, $registros[$i]->ubicacion)
+                ->setCellValue('P' . $j, $registros[$i]->name)
+                ->setCellValue('Q' . $j, $registros[$i]->documento)
 
 
 
-            ->setCellValue('R'.$j, $registros[$i]->pregunta_1_pre_1)
-            ->setCellValue('S'.$j, $registros[$i]->pregunta_2_pre_1)
-            ->setCellValue('T'.$j, $registros[$i]->pregunta_3_pre_1)
-            ->setCellValue('U'.$j, $registros[$i]->pregunta_4_pre_1)
-            ->setCellValue('V'.$j, $registros[$i]->pregunta_5_pre_1)
-            ->setCellValue('W'.$j, $registros[$i]->calificacion_pre_1)
+                ->setCellValue('R' . $j, $registros[$i]->pregunta_1_pre_1)
+                ->setCellValue('S' . $j, $registros[$i]->pregunta_2_pre_1)
+                ->setCellValue('T' . $j, $registros[$i]->pregunta_3_pre_1)
+                ->setCellValue('U' . $j, $registros[$i]->pregunta_4_pre_1)
+                ->setCellValue('V' . $j, $registros[$i]->pregunta_5_pre_1)
+                ->setCellValue('W' . $j, $registros[$i]->calificacion_pre_1)
 
-            ->setCellValue('X'.$j, $registros[$i]->pregunta_1_post_1)
-            ->setCellValue('Y'.$j, $registros[$i]->pregunta_2_post_1)
-            ->setCellValue('Z'.$j, $registros[$i]->pregunta_3_post_1)
-            ->setCellValue('AA'.$j, $registros[$i]->pregunta_4_post_1)
-            ->setCellValue('AB'.$j, $registros[$i]->pregunta_5_post_1)
-            ->setCellValue('AC'.$j, $registros[$i]->calificacion_post_1)
+                ->setCellValue('X' . $j, $registros[$i]->pregunta_1_post_1)
+                ->setCellValue('Y' . $j, $registros[$i]->pregunta_2_post_1)
+                ->setCellValue('Z' . $j, $registros[$i]->pregunta_3_post_1)
+                ->setCellValue('AA' . $j, $registros[$i]->pregunta_4_post_1)
+                ->setCellValue('AB' . $j, $registros[$i]->pregunta_5_post_1)
+                ->setCellValue('AC' . $j, $registros[$i]->calificacion_post_1)
 
-            ->setCellValue('AD'.$j, $registros[$i]->evaluacion_taller_1)
-            ->setCellValue('AE'.$j, $registros[$i]->importancia_informacion_1)
-
-
-
-            ->setCellValue('AF'.$j, $registros[$i]->pregunta_1_pre_2)
-            ->setCellValue('AG'.$j, $registros[$i]->pregunta_2_pre_2)
-            ->setCellValue('AH'.$j, $registros[$i]->pregunta_3_pre_2)
-            ->setCellValue('AI'.$j, $registros[$i]->pregunta_4_pre_2)
-            ->setCellValue('AJ'.$j, $registros[$i]->pregunta_5_pre_2)
-            ->setCellValue('AK'.$j, $registros[$i]->calificacion_pre_2)
-
-            ->setCellValue('AL'.$j, $registros[$i]->pregunta_1_post_2)
-            ->setCellValue('AM'.$j, $registros[$i]->pregunta_2_post_2)
-            ->setCellValue('AN'.$j, $registros[$i]->pregunta_3_post_2)
-            ->setCellValue('AO'.$j, $registros[$i]->pregunta_4_post_2)
-            ->setCellValue('AP'.$j, $registros[$i]->pregunta_5_post_2)
-            ->setCellValue('AQ'.$j, $registros[$i]->calificacion_post_2)
-
-            ->setCellValue('AR'.$j, $registros[$i]->evaluacion_taller_2)
-            ->setCellValue('AS'.$j, $registros[$i]->importancia_informacion_2)
+                ->setCellValue('AD' . $j, $registros[$i]->evaluacion_taller_1)
+                ->setCellValue('AE' . $j, $registros[$i]->importancia_informacion_1)
 
 
 
-            ->setCellValue('AT'.$j, $registros[$i]->pregunta_1_pre_3)
-            ->setCellValue('AU'.$j, $registros[$i]->pregunta_2_pre_3)
-            ->setCellValue('AV'.$j, $registros[$i]->pregunta_3_pre_3)
-            ->setCellValue('AW'.$j, $registros[$i]->pregunta_4_pre_3)
-            ->setCellValue('AX'.$j, $registros[$i]->pregunta_5_pre_3)
-            ->setCellValue('AY'.$j, $registros[$i]->calificacion_pre_3)
+                ->setCellValue('AF' . $j, $registros[$i]->pregunta_1_pre_2)
+                ->setCellValue('AG' . $j, $registros[$i]->pregunta_2_pre_2)
+                ->setCellValue('AH' . $j, $registros[$i]->pregunta_3_pre_2)
+                ->setCellValue('AI' . $j, $registros[$i]->pregunta_4_pre_2)
+                ->setCellValue('AJ' . $j, $registros[$i]->pregunta_5_pre_2)
+                ->setCellValue('AK' . $j, $registros[$i]->calificacion_pre_2)
 
-            ->setCellValue('AZ'.$j, $registros[$i]->pregunta_1_post_3)
-            ->setCellValue('BA'.$j, $registros[$i]->pregunta_2_post_3)
-            ->setCellValue('BB'.$j, $registros[$i]->pregunta_3_post_3)
-            ->setCellValue('BC'.$j, $registros[$i]->pregunta_4_post_3)
-            ->setCellValue('BD'.$j, $registros[$i]->pregunta_5_post_3)
-            ->setCellValue('BE'.$j, $registros[$i]->calificacion_post_3)
+                ->setCellValue('AL' . $j, $registros[$i]->pregunta_1_post_2)
+                ->setCellValue('AM' . $j, $registros[$i]->pregunta_2_post_2)
+                ->setCellValue('AN' . $j, $registros[$i]->pregunta_3_post_2)
+                ->setCellValue('AO' . $j, $registros[$i]->pregunta_4_post_2)
+                ->setCellValue('AP' . $j, $registros[$i]->pregunta_5_post_2)
+                ->setCellValue('AQ' . $j, $registros[$i]->calificacion_post_2)
 
-            ->setCellValue('BF'.$j, $registros[$i]->evaluacion_taller_3)
-            ->setCellValue('BG'.$j, $registros[$i]->importancia_informacion_3)
-
-            ->setCellValue('BH'.$j, $registros[$i]->pregunta_1_car_3)
-            ->setCellValue('BI'.$j, $registros[$i]->pregunta_2_car_3)
-            ->setCellValue('BJ'.$j, $registros[$i]->pregunta_3_car_3)
-            ->setCellValue('BK'.$j, $registros[$i]->pregunta_4_car_3)
-            ->setCellValue('BL'.$j, $registros[$i]->pregunta_5_car_3)
-            ->setCellValue('BM'.$j, $registros[$i]->pregunta_6_car_3)
+                ->setCellValue('AR' . $j, $registros[$i]->evaluacion_taller_2)
+                ->setCellValue('AS' . $j, $registros[$i]->importancia_informacion_2)
 
 
 
-            ->setCellValue('BN'.$j, $registros[$i]->pregunta_1_pre_4)
-            ->setCellValue('BO'.$j, $registros[$i]->pregunta_2_pre_4)
-            ->setCellValue('BP'.$j, $registros[$i]->pregunta_3_pre_4)
-            ->setCellValue('BQ'.$j, $registros[$i]->pregunta_4_pre_4)
-            ->setCellValue('BR'.$j, $registros[$i]->pregunta_5_pre_4)
-            ->setCellValue('BS'.$j, $registros[$i]->calificacion_pre_4)
+                ->setCellValue('AT' . $j, $registros[$i]->pregunta_1_pre_3)
+                ->setCellValue('AU' . $j, $registros[$i]->pregunta_2_pre_3)
+                ->setCellValue('AV' . $j, $registros[$i]->pregunta_3_pre_3)
+                ->setCellValue('AW' . $j, $registros[$i]->pregunta_4_pre_3)
+                ->setCellValue('AX' . $j, $registros[$i]->pregunta_5_pre_3)
+                ->setCellValue('AY' . $j, $registros[$i]->calificacion_pre_3)
 
-            ->setCellValue('BT'.$j, $registros[$i]->pregunta_1_post_4)
-            ->setCellValue('BU'.$j, $registros[$i]->pregunta_2_post_4)
-            ->setCellValue('BV'.$j, $registros[$i]->pregunta_3_post_4)
-            ->setCellValue('BW'.$j, $registros[$i]->pregunta_4_post_4)
-            ->setCellValue('BX'.$j, $registros[$i]->pregunta_5_post_4)
-            ->setCellValue('BY'.$j, $registros[$i]->calificacion_post_4)
+                ->setCellValue('AZ' . $j, $registros[$i]->pregunta_1_post_3)
+                ->setCellValue('BA' . $j, $registros[$i]->pregunta_2_post_3)
+                ->setCellValue('BB' . $j, $registros[$i]->pregunta_3_post_3)
+                ->setCellValue('BC' . $j, $registros[$i]->pregunta_4_post_3)
+                ->setCellValue('BD' . $j, $registros[$i]->pregunta_5_post_3)
+                ->setCellValue('BE' . $j, $registros[$i]->calificacion_post_3)
 
-            ->setCellValue('BZ'.$j, $registros[$i]->evaluacion_taller_4)
-            ->setCellValue('CA'.$j, $registros[$i]->importancia_informacion_4)
+                ->setCellValue('BF' . $j, $registros[$i]->evaluacion_taller_3)
+                ->setCellValue('BG' . $j, $registros[$i]->importancia_informacion_3)
+
+                ->setCellValue('BH' . $j, $registros[$i]->pregunta_1_car_3)
+                ->setCellValue('BI' . $j, $registros[$i]->pregunta_2_car_3)
+                ->setCellValue('BJ' . $j, $registros[$i]->pregunta_3_car_3)
+                ->setCellValue('BK' . $j, $registros[$i]->pregunta_4_car_3)
+                ->setCellValue('BL' . $j, $registros[$i]->pregunta_5_car_3)
+                ->setCellValue('BM' . $j, $registros[$i]->pregunta_6_car_3)
 
 
 
-            ->setCellValue('CB'.$j, $registros[$i]->nivel)
-            ->setCellValue('CC'.$j, 'PERSONA FORMADA');
-            
+                ->setCellValue('BN' . $j, $registros[$i]->pregunta_1_pre_4)
+                ->setCellValue('BO' . $j, $registros[$i]->pregunta_2_pre_4)
+                ->setCellValue('BP' . $j, $registros[$i]->pregunta_3_pre_4)
+                ->setCellValue('BQ' . $j, $registros[$i]->pregunta_4_pre_4)
+                ->setCellValue('BR' . $j, $registros[$i]->pregunta_5_pre_4)
+                ->setCellValue('BS' . $j, $registros[$i]->calificacion_pre_4)
+
+                ->setCellValue('BT' . $j, $registros[$i]->pregunta_1_post_4)
+                ->setCellValue('BU' . $j, $registros[$i]->pregunta_2_post_4)
+                ->setCellValue('BV' . $j, $registros[$i]->pregunta_3_post_4)
+                ->setCellValue('BW' . $j, $registros[$i]->pregunta_4_post_4)
+                ->setCellValue('BX' . $j, $registros[$i]->pregunta_5_post_4)
+                ->setCellValue('BY' . $j, $registros[$i]->calificacion_post_4)
+
+                ->setCellValue('BZ' . $j, $registros[$i]->evaluacion_taller_4)
+                ->setCellValue('CA' . $j, $registros[$i]->importancia_informacion_4)
+
+
+
+                ->setCellValue('CB' . $j, $registros[$i]->nivel)
+                ->setCellValue('CC' . $j, 'PERSONA FORMADA');
+
             $j++;
         }
         $spreadsheet->setActiveSheetIndex(0);
@@ -1078,7 +1087,6 @@ class AdminController extends Controller
 
         $writer = new Xlsx($spreadsheet);
         $writer->save('php://output');
-        
     }
 
     public function exportarExcelAcciones(Request $request)
@@ -1772,13 +1780,13 @@ class AdminController extends Controller
             ->setCellValue('N1', 'NIVEL I - PREGUNTA 3')
             ->setCellValue('O1', 'NIVEL I - PREGUNTA 4')
             ->setCellValue('P1', 'NIVEL I - PREGUNTA 5')
-            
+
             ->setCellValue('Q1', 'NIVEL II - PREGUNTA 6')
             ->setCellValue('R1', 'NIVEL II - PREGUNTA 7')
             ->setCellValue('S1', 'NIVEL II - PREGUNTA 8')
             ->setCellValue('T1', 'NIVEL II - PREGUNTA 9')
             ->setCellValue('U1', 'NIVEL II - PREGUNTA 10')
-            
+
             ->setCellValue('V1', 'NIVEL III - PREGUNTA 11')
             ->setCellValue('W1', 'NIVEL III - PREGUNTA 12')
             ->setCellValue('X1', 'NIVEL III - PREGUNTA 13')
@@ -1825,7 +1833,7 @@ class AdminController extends Controller
             if ($registros[$i]->ciclista_evitar_res_1 == 1) {
                 $respuestas_evitar .= 'Buscando siempre ver la cara del conductor del otro vehículo por uno de sus espejos.';
             }
-            
+
             if ($registros[$i]->ciclista_evitar_res_1 == 1 && $registros[$i]->ciclista_evitar_res_2 == 1) {
                 $respuestas_evitar .= ' - ';
             }

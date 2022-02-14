@@ -37,6 +37,7 @@
 
                         <div class="row">
 
+<<<<<<< HEAD
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>Filtro punto</label>
@@ -49,6 +50,84 @@
                                         @endforeach
                                     </select>
                                 </div>
+=======
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Filtro punto</label>
+                                        <select class="select2 form-control" id="punto" onchange="tabla(); filtroColectivo(); ">
+                                            <option value=""></option>
+                                            @foreach ($puntos as $punto)
+                                                <option value="{{ $punto->id}}">{{ $punto->nombre_punto }} - {{ $punto->ubicacion }} 
+                                                    </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3" style="display: none" id="tagscolectivo">
+                                    <div class="form-group">
+                                        <label>Filtro colectivo</label>
+                                        <select class="select2 form-control" id="colectivo" onchange="tabla()">
+                                            <option value=""></option>}
+                                            {{-- @foreach ($puntosFormacion  as $colectivo)
+                                                <option value="{{ $colectivo->id }}"> {{ $colectivo->colectivo }} - {{ $colectivo->ubicacion_espacio }} 
+                                                </option>
+                                            @endforeach --}}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Filtro nivel</label>
+                                        <select class="select2 form-control" id="nivel" onchange="tabla()">
+                                            <option value=""></option>
+                                            @foreach ($niveles as $nivel)
+                                                    <option   value="{{ $nivel->id }}"> nivel {{ $nivel->nivel }}
+                                                    </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3" style="display: none" id="tags">
+                                    <div class="form-group">
+                                        <label>tags</label>
+                                        <select class="select2 form-control" id="campo" onchange="tabla()">
+                                            <option value=""></option>
+                                            @foreach ($campos as $campo)
+                                                <option >
+                                                    {{ $campo }} 
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
+                                
+
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>Filtro fecha - desde</label>
+                                        <input type='date' class="form-control" id="fecha_desde" onchange="tabla()">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>Hasta</label>
+                                        <input type='date' class="form-control" id="fecha_hasta" onchange="tabla()">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-2">
+                                    <div class="form-group"><br>
+                                        <input type='button' class="btn btn-info" onclick="reiniciarFiltros()"
+                                            value="Reiniciar Filtros">
+                                    </div>
+                                </div>
+
+>>>>>>> 3cf60fd554c2889819a7dd1f75d5b5f891845625
                             </div>
 
                             <div class="col-md-3">
@@ -152,6 +231,7 @@
 
 </section>
 
+<<<<<<< HEAD
 <script>
 
 function filtros(){
@@ -176,6 +256,48 @@ function filtros(){
 
 
     function tabla() 
+=======
+    <script>
+
+        function filtroColectivo(){
+            let punto = $("#punto").val();
+            // console.log(punto)
+
+            let url = "{{ route('filtrocolectivos') }}";
+                $.ajax({
+
+                        url: url,
+                        type: "get",
+                        data: {
+                            punto: punto,
+                        },
+                    })
+                    .done(function(data) {
+                        if (data != null) {
+                            data = JSON.parse(data);
+                            // console.log(data)
+
+                            let colectivos = $('#colectivo');
+
+                            colectivos.find('option').remove();
+                            colectivos.append('<option value="0">seleccione</option>');
+                            $(data).each(function(i, v) { // indice, valor
+                                colectivos.append('<option value="' + v.id + '">' + v.colectivo +
+                                    '</option>');
+                            })
+
+                        } else {
+                            alert('No se pudo Cargar las colectivos');
+                        }
+
+                    })
+                    .fail(function(jqXHR, ajaxOptions, thrownError) {
+                        console.log(jqXHR, ajaxOptions, thrownError)
+                    });
+        }
+
+        function tabla() {
+>>>>>>> 3cf60fd554c2889819a7dd1f75d5b5f891845625
             var colectivo = $("#colectivo").val();
             var punto = $("#punto").val();
             var nivel = $("#nivel").val();
@@ -183,6 +305,28 @@ function filtros(){
             var fecha = $("#fecha_desde").val();
             var fecha_H = $("#fecha_hasta").val();
 
+<<<<<<< HEAD
+=======
+            const asa = @json($puntosFormacion);
+            if(punto != ""){
+                for (let i = 0; i<asa.length; i++) {
+                    var eje = asa[i];
+                    
+                    if(eje.puntos_id == punto){
+                        
+                        eje.id=colectivo 
+                    }
+                }
+            }
+
+            
+            if (punto != "") {
+                $('#tagscolectivo').show();
+            }
+            else{
+                $('#tagscolectivo').hide();
+            }
+>>>>>>> 3cf60fd554c2889819a7dd1f75d5b5f891845625
 
             if (nivel != "") {
                 $('#tags').show();
@@ -190,7 +334,6 @@ function filtros(){
             else{
                 $('#tags').hide();
             }
-
 
             if (fecha != "") {
                 if (fecha_H == "") {
@@ -287,7 +430,12 @@ function filtros(){
                 }
             });
         }
+<<<<<<< HEAD
 </script>
+=======
+    </script>
+
+>>>>>>> 3cf60fd554c2889819a7dd1f75d5b5f891845625
 
 @endsection
 
