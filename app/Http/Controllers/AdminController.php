@@ -540,7 +540,7 @@ class AdminController extends Controller
         //             "formacion_puntos.*"
         //         )
         //         ->get();
-        //     }
+        // }
 
         if (isset($nivelFP) && !empty($nivelFP != ""  )) {
             if (isset($nivelF) && !empty($nivelF) && isset($nivelFP) && !empty($nivelFP)) {
