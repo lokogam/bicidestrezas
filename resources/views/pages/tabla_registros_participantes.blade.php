@@ -23,26 +23,26 @@
                     <i class="feather icon-eye">{{ $registro->id }}</i>
                 </button>
             </td>
-            
+
             <td>{{ $registro->nombre_punto }} <br> {{ $registro->ubicacion }}</td>
             <td>{{ $registro->colectivo }} <br> {{ $registro->ubicacion_espacio }}</td>
             <td>{{ $registro->nombre }}</td>
             <td>{{ $registro->numero_documento }}</td>
             <td>{{ $registro->correo }}</td>
             <td>{{ $registro->numero_celular }}</td>
-            
+
             <th>
                 1
-                <input type="radio"  {{ $registro->evaluacion_taller_1 != '' ? 'checked' : 'disabled' }}>
+                <input type="radio" {{ $registro->evaluacion_taller_1 != '' ? 'checked' : 'disabled' }}>
                 2
-                <input type="radio"  {{ $registro->evaluacion_taller_2 != '' ? 'checked' : 'disabled' }}>
+                <input type="radio" {{ $registro->evaluacion_taller_2 != '' ? 'checked' : 'disabled' }}>
                 3
-                <input type="radio"  {{ $registro->evaluacion_taller_3 != '' ? 'checked' : 'disabled' }}>
+                <input type="radio" {{ $registro->evaluacion_taller_3 != '' ? 'checked' : 'disabled' }}>
                 4
-                <input type="radio"  {{ $registro->evaluacion_taller_4 != '' ? 'checked' : 'disabled' }}>
+                <input type="radio" {{ $registro->evaluacion_taller_4 != '' ? 'checked' : 'disabled' }}>
             </th>
         </tr>
-            
+
         @endforeach
     </tbody>
 
@@ -61,12 +61,12 @@
 </table>
 
 <div class="pagination">
-    {{ $registros->appends([ 
-        'nivelF' => Request::input('nivelF'),
-        'nivelFP' => Request::input('nivelFP'),
-        'puntoR' => Request::input('puntoR'), 
-        'puntoRF' => Request::input('puntoRF'),
-        'fechaR' => Request::input('fechaR'), 
-        'fechahR' => Request::input('fechahR')
-        ])->links() }}
+    {{ $registros->appends([
+    'nivelF' => Request::input('nivelF'),
+    'nivelFP' => Request::input('nivelFP'),
+    'puntoR' => Request::input('puntoR'),
+    'puntoRF' => Request::input('puntoRF'),
+    'fechaR' => Request::input('fechaR'),
+    'fechahR' => Request::input('fechahR')
+    ])->links() }}
 </div>

@@ -33,8 +33,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>Filtro punto</label>
-                                    <select class="select2 form-control" id="punto"
-                                        onchange="filtroColectivo(); ">
+                                    <select class="select2 form-control" id="punto" onchange="filtroColectivo(); ">
                                         <option value=""></option>
                                         @foreach ($puntos as $punto)
                                         <option value="{{ $punto->id}}">{{ $punto->nombre_punto }} - {{
